@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "422309355739",
+    "project_id": "aicharamaker",
+    "storage_bucket": "aicharamaker.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:422309355739:android:8691bbd78039e203336cfe",
+        "android_client_info": {
+          "package_name": "com.example.aicharamaker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCFJ_pjQz96Gl3eKKhe28ybemrBdvm6w6w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
