@@ -1,7 +1,5 @@
+import 'package:aicharamaker/ui/chat/view/chat_page.dart';
 import 'package:flutter/material.dart';
-
-// 遷移先
-import 'package:aicharamaker/countup/count_up_page.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -15,7 +13,9 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      debugShowCheckedModeBanner: false, //Debugのバナーを非表示
+      // テスト用で変更中　pushしないように気をつける
+      home: ChatPage(),
     );
   }
 }
