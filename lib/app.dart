@@ -1,4 +1,4 @@
-import 'package:aicharamaker/ui/chat/view/chat_page.dart';
+import 'package:aicharamaker/ui/home/home_page.dart';
 import 'package:flutter/material.dart';
 
 class MyApp extends StatelessWidget {
@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false, //Debugのバナーを非表示
       // テスト用で変更中　pushしないように気をつける
-      home: ChatPage(),
+      home: MainScreen(),
     );
   }
 }
