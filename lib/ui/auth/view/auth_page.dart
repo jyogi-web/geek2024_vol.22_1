@@ -7,6 +7,7 @@ import 'package:aicharamaker/ui/home/home_page.dart';
 // 標準
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class AuthPage extends StatefulWidget {
   @override
@@ -35,7 +36,18 @@ class _AuthPageState extends State<AuthPage> {
             children: <Widget>[
               // メールアドレスでログイン
               ElevatedButton(
-                child: const Text('メールアドレスでログイン'),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    HugeIcon(
+                      icon: HugeIcons.strokeRoundedMailAccount01,
+                      color: Colors.black,
+                      size: 24.0,
+                    ),
+                    SizedBox(width: 8),
+                    Text('メールアドレスでログイン'),
+                  ],
+                ),
                 onPressed: () {
                   Navigator.push(
                       context,
@@ -45,24 +57,47 @@ class _AuthPageState extends State<AuthPage> {
               ),
               // GitHubでログイン
               ElevatedButton(
-                  child: Text('GitHubでログイン'),
-                  onPressed: () async {
-                    try {
-                      await _signInWithGitHub();
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return MainScreen();
-                          },
-                        ),
-                      );
-                    } catch (e) {
-                      print('エラーです');
-                    }
-                  }),
-              // メールアドレスでサインアップ
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    HugeIcon(
+                      icon: HugeIcons.strokeRoundedGithub01,
+                      color: Colors.black,
+                      size: 24.0,
+                    ),
+                    SizedBox(width: 8),
+                    Text('GitHubでログイン'),
+                  ],
+                ),
+                onPressed: () async {
+                  try {
+                    await _signInWithGitHub();
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return MainScreen();
+                        },
+                      ),
+                    );
+                  } catch (e) {
+                    print('エラーです');
+                  }
+                },
+              ),
+              // メールアドレスでログイン
               ElevatedButton(
-                child: const Text('メールアドレスでサインアップ'),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    HugeIcon(
+                      icon: HugeIcons.strokeRoundedMailAccount01,
+                      color: Colors.black,
+                      size: 24.0,
+                    ),
+                    SizedBox(width: 8),
+                    Text('メールアドレスでアカウント登録'),
+                  ],
+                ),
                 onPressed: () {
                   Navigator.push(
                       context,
