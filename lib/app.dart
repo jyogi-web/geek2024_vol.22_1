@@ -1,7 +1,5 @@
+import 'package:aicharamaker/ui/home/home_page.dart';
 import 'package:flutter/material.dart';
-
-// 遷移先
-import 'package:aicharamaker/countup/count_up_page.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -10,12 +8,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title:'AiCharaMaker',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      debugShowCheckedModeBanner: false, //Debugのバナーを非表示
+      home: HomeScreen(),
     );
   }
 }
