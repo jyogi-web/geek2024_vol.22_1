@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 // 画面遷移のためのWidget
+import 'package:aicharamaker/ui/chat/view/chat_page.dart';
 import 'package:aicharamaker/ui/auth/view/auth_page.dart';
 
 class MainScreen extends StatefulWidget {
@@ -14,7 +15,7 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _screens = [
     HomeScreen(),
     CreateScreen(),
-    TalkScreen(),
+    ChatPage(),
     FavoriteScreen(),
     AuthPage(),
   ];
