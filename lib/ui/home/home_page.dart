@@ -45,6 +45,7 @@ class _MainScreenState extends State<MainScreen> {
 }
 
 // 各画面のWidget（仮のUIを表示）
+// これを各ページのファイルに分離して作成
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
