@@ -1,6 +1,7 @@
 // 遷移先
 import 'package:aicharamaker/ui/auth/view/email_login_page.dart';
 import 'package:aicharamaker/ui/auth/view/email_sign_up_page.dart';
+import 'package:aicharamaker/ui/auth/view/github_login_page.dart';
 import 'package:aicharamaker/ui/home/home_page.dart';
 
 // 標準
@@ -14,6 +15,11 @@ class AuthPage extends StatefulWidget {
 
 class _AuthPageState extends State<AuthPage> {
   // ログイン・サインインの選択画面
+  GithubAuthProvider githubProvider = GithubAuthProvider();
+
+  Future _signInWithGitHub() async {
+    await FirebaseAuth.instance.signInWithPopup(githubProvider);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +43,23 @@ class _AuthPageState extends State<AuthPage> {
                           builder: (context) => EmailLoginPage()));
                 },
               ),
+              // GitHubでログイン
+              ElevatedButton(
+                  child: Text('GitHubでログイン'),
+                  onPressed: () async {
+                    try {
+                      await _signInWithGitHub();
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return MainScreen();
+                          },
+                        ),
+                      );
+                    } catch (e) {
+                      print('エラーです');
+                    }
+                  }),
               // メールアドレスでサインアップ
               ElevatedButton(
                 child: const Text('メールアドレスでサインアップ'),
