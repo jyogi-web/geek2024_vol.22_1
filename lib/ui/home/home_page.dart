@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 // 画面遷移のためのWidget
 import 'package:aicharamaker/ui/chat/view/chat_page.dart';
 import 'package:aicharamaker/ui/auth/view/auth_page.dart';
+import 'package:aicharamaker/ui/create/view/create_page.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -54,20 +55,6 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(child: Text('ホーム画面', style: TextStyle(fontSize: 24)));
-  }
-}
-
-class CreateScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text('クリエイト画面', style: TextStyle(fontSize: 24)));
-  }
-}
-
-class TalkScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text('トーク画面', style: TextStyle(fontSize: 24)));
   }
 }
 
