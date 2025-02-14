@@ -64,10 +64,3 @@ class FavoriteScreen extends StatelessWidget {
     return Center(child: Text('お気に入り画面', style: TextStyle(fontSize: 24)));
   }
 }
-
-class UserScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text('ユーザー画面', style: TextStyle(fontSize: 24)));
-  }
-}

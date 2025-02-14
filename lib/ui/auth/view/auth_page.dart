@@ -30,9 +30,12 @@ class AuthPage extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    // メールアドレスでログイン
-                    ElevatedButton(
-                      child: Row(
+                    //Containerでラップしてmarginをつけて余白を作成した
+                    Container(
+                      margin: EdgeInsets.all(10),
+                      child: ElevatedButton(
+                      child: 
+                      Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           HugeIcon(
@@ -52,8 +55,13 @@ class AuthPage extends StatelessWidget {
                         );
                       },
                     ),
+                    ),
+                    // メールアドレスでログイン
+                    
                     // GitHubでログイン
-                    ElevatedButton(
+                    Container(
+                      margin: EdgeInsets.all(10),
+                      child:  ElevatedButton(
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -78,8 +86,12 @@ class AuthPage extends StatelessWidget {
                         }
                       },
                     ),
+                    ),
+
                     // メールアドレスでアカウント登録
-                    ElevatedButton(
+                    Container(
+                      margin: EdgeInsets.all(10),
+                      child: ElevatedButton(
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -100,8 +112,11 @@ class AuthPage extends StatelessWidget {
                         );
                       },
                     ),
+                    ),
                     // ログアウト
-                    ElevatedButton(
+                    Container(
+                      margin: EdgeInsets.all(10),
+                      child:ElevatedButton(
                       child: const Text('ログアウト'),
                       onPressed: () async {
                         await authVM.signOut();
@@ -111,6 +126,8 @@ class AuthPage extends StatelessWidget {
                         );
                       },
                     ),
+                    ),
+                    
                     const SizedBox(height: 20),
                     // ログインユーザ情報を表示する例
                     if (authVM.currentUser != null) ...[
