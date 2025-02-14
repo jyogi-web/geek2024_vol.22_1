@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:aicharamaker/model/user_model.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 /// 認証まわりの状態や処理をまとめる。
@@ -23,7 +22,10 @@ class AuthViewModel extends ChangeNotifier {
       // 取得したFirebaseのUserをUserModelに変換して保持する
       final user = userCredential.user;
       if (user != null) {
-        currentUser = _convertToUserModel(user);
+        currentUser = _convertToUserModel(user); // FirebaseのUserをUserModelに変換
+        // ログイン成功時の処理
+        // ログイン成功時にFirestoreにユーザー情報を保存する
+        await storeUserProfile(currentUser!);
         debugPrint("GitHubログイン成功: ${currentUser!.toJson()}");
       }
     } catch (e, st) {
@@ -42,7 +44,9 @@ class AuthViewModel extends ChangeNotifier {
       );
       final user = userCredential.user;
       if (user != null) {
-        currentUser = _convertToUserModel(user);
+        currentUser = _convertToUserModel(user); // FirebaseのUserをUserModelに変換
+        // ログイン成功時の処理
+        await storeUserProfile(currentUser!); // ユーザー情報をFirestoreに保存
         debugPrint("メールログイン成功: ${currentUser!.toJson()}");
       }
     } catch (e, st) {
@@ -62,6 +66,8 @@ class AuthViewModel extends ChangeNotifier {
       final user = userCredential.user;
       if (user != null) {
         currentUser = _convertToUserModel(user);
+        // アカウント作成成功時の処理
+        await storeUserProfile(currentUser!); // ユーザー情報をFirestoreに保存
         debugPrint("メールでアカウント作成成功: ${currentUser!.toJson()}");
       }
     } catch (e, st) {
@@ -79,10 +85,38 @@ class AuthViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> fetchUser() async {
+    final user = _firebaseAuth.currentUser;
+    if (user != null) {
+      currentUser = _convertToUserModel(user);
+      debugPrint("ユーザー情報取得: ${currentUser!.toJson()}");
+    }
+    notifyListeners();
+  }
+
+  Future<void> storeUserProfile(UserModel usermodel) async {
+    final user = _firebaseAuth.currentUser;
+    if (user != null) {
+      final userRef =
+          FirebaseFirestore.instance.collection('users').doc(user.uid);
+      await userRef.set(usermodel.toJson()); //ユーザー情報を保存
+      await userRef.collection('createdProfiles').doc('null'); // ユーザー情報の初期化
+      await userRef.collection('likedProfiles').doc('null'); // ユーザー情報の初期化
+      debugPrint("ユーザー情報をFirestoreに保存しました: ${usermodel.toJson()}");
+    }
+    notifyListeners();
+  }
+
+  /// パスワードリセット用
+  Future<void> resetPassword(String email) async {
+    await _firebaseAuth.sendPasswordResetEmail(email: email);
+    debugPrint("$email へパスワードリセット用のメールを送信しました");
+  }
+
   /// FirebaseのUser情報をUserModelに変換するヘルパー
   UserModel _convertToUserModel(User user) {
     return UserModel(
-      name: user.displayName ?? '',
+      name: user.displayName ?? 'No Name',
       email: user.email,
       isEmailVerified: user.emailVerified,
       isAnonymous: user.isAnonymous,

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:provider/provider.dart';
 
 // ViewModel, Model
-import 'package:aicharamaker/model/user_model.dart';
 import 'package:aicharamaker/ui/auth/view_model/auth_view_model.dart';
 import 'email_login_page.dart';
 import 'email_sign_up_page.dart';
@@ -17,17 +15,15 @@ class AuthPage extends StatelessWidget {
   Widget build(BuildContext context) {
     // ChangeNotifierProvider で AuthViewModel を提供
     return ChangeNotifierProvider(
-      create: (_) => AuthViewModel(),
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('ログイン・サインアップ'),
-        ),
-        body: Consumer<AuthViewModel>(
-          builder: (context, authVM, child) {
-            return Center(
-              child: Container(
-                padding: const EdgeInsets.all(24),
-                child: Column(
+        create: (_) => AuthViewModel(),
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text('ログイン・サインアップ'),
+          ),
+          body: Center(
+            child: Container(
+              padding: const EdgeInsets.all(24),
+              child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     // メールアドレスでログイン
@@ -68,7 +64,8 @@ class AuthPage extends StatelessWidget {
                       ),
                       onPressed: () async {
                         try {
-                          await authVM.signInWithGitHub();
+                          // GitHubログイン処理
+                          // await authVM.signInWithGitHub();
                           Navigator.of(context).push(
                             MaterialPageRoute(builder: (_) => MainScreen()),
                           );
@@ -104,30 +101,18 @@ class AuthPage extends StatelessWidget {
                     ElevatedButton(
                       child: const Text('ログアウト'),
                       onPressed: () async {
-                        await authVM.signOut();
+                        // ログアウト処理
+                        // await authVM.signOut();
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => AuthPage()),
                         );
                       },
                     ),
-                    const SizedBox(height: 20),
-                    // ログインユーザ情報を表示する例
-                    if (authVM.currentUser != null) ...[
-                      Text('ログイン中ユーザ:'),
-                      Text('UID: ${authVM.currentUser?.uid}'),
-                      Text('Name: ${authVM.currentUser?.name}'),
-                      Text('Email: ${authVM.currentUser?.email}'),
-                    ] else ...[
-                      const Text('未ログインです。'),
-                    ],
-                  ],
-                ),
-              ),
-            );
-          },
-        ),
-      ),
-    );
+                    const SizedBox(height: 20)
+                  ]),
+            ),
+          ),
+        ));
   }
 }
