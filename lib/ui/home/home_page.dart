@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:aicharamaker/ui/chat/view/chat_page.dart';
 import 'package:aicharamaker/ui/auth/view/auth_page.dart';
 import 'package:aicharamaker/ui/create/view/create_page.dart';
+import 'package:aicharamaker/ui/home/HomeScreen.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -30,6 +31,12 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text("ぷろふぃーるはぶ", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        titleTextStyle: TextStyle(color: Colors.black),
+      ),
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
@@ -51,12 +58,8 @@ class _MainScreenState extends State<MainScreen> {
 
 // 各画面のWidget（仮のUIを表示）
 // これを各ページのファイルに分離して作成
-class HomeScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text('ホーム画面', style: TextStyle(fontSize: 24)));
-  }
-}
+
+
 
 class FavoriteScreen extends StatelessWidget {
   @override
