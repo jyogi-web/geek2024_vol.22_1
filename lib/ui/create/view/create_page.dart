@@ -1,12 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:aicharamaker/ui/create/view_model/create_view_model.dart';
+import 'package:aicharamaker/ui/auth/view/auth_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class CreateScreen extends StatelessWidget {
   const CreateScreen({Key? key}) : super(key: key);
 
+  // ユーザーがログインしているかどうかを判定するメソッド
+  bool _isUserLoggedIn(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+    print('user: $user');
+    if (user != null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isLoggedIn = _isUserLoggedIn(context);
+    print('isLoggedIn: $isLoggedIn');
+    // ログインしていない場合、AuthPage()への遷移ボタンのみを表示
+    if (!isLoggedIn) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text("キャラ作成"),
+        ),
+        body: Center(
+          child: ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const AuthPage()),
+              );
+            },
+            child: const Text("ログインして作成する"),
+          ),
+        ),
+      );
+    }
+
     return ChangeNotifierProvider(
       create: (_) => CreateScreenViewModel(),
       child: Scaffold(

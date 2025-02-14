@@ -3,6 +3,7 @@ import 'package:aicharamaker/model/profile_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:aicharamaker/ui/home/home_page.dart';
+import 'package:aicharamaker/ui/auth/view/auth_page.dart';
 
 class CreateScreenViewModel extends ChangeNotifier {
   // 入力されるテキストを管理するコントローラー
@@ -32,6 +33,11 @@ class CreateScreenViewModel extends ChangeNotifier {
 
     if (user == null) {
       debugPrint('User is not logged in');
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => AuthPage(),
+        ),
+      );
       return;
     }
 
