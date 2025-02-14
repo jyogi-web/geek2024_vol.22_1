@@ -5,11 +5,11 @@ import 'package:aicharamaker/ui/chat/view/chat_page.dart';
 import 'package:aicharamaker/ui/auth/view/auth_page.dart';
 import 'package:aicharamaker/ui/create/view/create_page.dart';
 import 'package:aicharamaker/ui/home/HomeScreen.dart';
+import 'package:aicharamaker/ui/favorite/favorite_page.dart';
 
 class MainScreen extends StatefulWidget {
   @override
-  _MainScreenState createState() => _MainScreenState();
-}
+  _MainScreenState createState() => _MainScreenState();}
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
@@ -61,12 +61,6 @@ class _MainScreenState extends State<MainScreen> {
 
 
 
-class FavoriteScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text('お気に入り画面', style: TextStyle(fontSize: 24)));
-  }
-}
 
 class UserScreen extends StatelessWidget {
   @override
