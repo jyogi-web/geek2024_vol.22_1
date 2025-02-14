@@ -5,7 +5,6 @@ import 'firebase_options.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'app.dart';
 import 'package:provider/provider.dart';
-import 'package:aicharamaker/ui/auth/view_model/auth_view_model.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

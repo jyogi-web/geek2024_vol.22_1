@@ -2,15 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:aicharamaker/ui/create/view_model/create_view_model.dart';
 
-/// UI定義側 (MVVMパターンの "View" 相当)。
-/// ViewModelを使って入力フォームとボタンを表示し、ユーザー入力を受け付ける。
 class CreateScreen extends StatelessWidget {
   const CreateScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    /// ChangeNotifierProvider を使って ViewModel を提供
-    /// （別画面から受け取る場合などはスコープに合わせて書き方を変える）
     return ChangeNotifierProvider(
       create: (_) => CreateScreenViewModel(),
       child: Scaffold(
@@ -155,18 +151,10 @@ class CreateScreen extends StatelessWidget {
                   const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {
-                      // ViewModelの submitProfile を呼び出す
-                      viewModel.submitProfile();
+                      viewModel.submitProfile(context); // contextを渡す
                     },
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 15,
-                        horizontal: 50,
-                      ),
-                      textStyle: const TextStyle(fontSize: 18),
-                    ),
                     child: const Text("決定！"),
-                  ),
+                  )
                 ],
               ),
             );
