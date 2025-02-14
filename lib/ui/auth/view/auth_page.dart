@@ -32,6 +32,7 @@ class AuthPage extends StatelessWidget {
                   children: <Widget>[
                     //Containerでラップしてmarginをつけて余白を作成した
                     Container(
+                      width: 300,
                       margin: EdgeInsets.all(10),
                       child: ElevatedButton(
                       child: 
@@ -60,6 +61,7 @@ class AuthPage extends StatelessWidget {
                     
                     // GitHubでログイン
                     Container(
+                      width: 300,
                       margin: EdgeInsets.all(10),
                       child:  ElevatedButton(
                       child: Row(
@@ -90,6 +92,7 @@ class AuthPage extends StatelessWidget {
 
                     // メールアドレスでアカウント登録
                     Container(
+                      width: 300,
                       margin: EdgeInsets.all(10),
                       child: ElevatedButton(
                       child: Row(
@@ -115,6 +118,7 @@ class AuthPage extends StatelessWidget {
                     ),
                     // ログアウト
                     Container(
+                      width: 300,
                       margin: EdgeInsets.all(10),
                       child:ElevatedButton(
                       child: const Text('ログアウト'),
@@ -127,7 +131,7 @@ class AuthPage extends StatelessWidget {
                       },
                     ),
                     ),
-                    
+
                     const SizedBox(height: 20),
                     // ログインユーザ情報を表示する例
                     if (authVM.currentUser != null) ...[
