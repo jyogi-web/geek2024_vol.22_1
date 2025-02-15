@@ -1,10 +1,9 @@
-import 'package:aicharamaker/ui/home/home_page.dart';
-import 'package:aicharamaker/ui/auth/view/auth_page.dart';
-import 'package:aicharamaker/ui/auth/view/email_login_page.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:aicharamaker/ui/auth/view_model/auth_view_model.dart';
+import 'package:aicharamaker/ui/auth/view/email_login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../components/background_animation.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class EmailSignUpPage extends StatefulWidget {
   const EmailSignUpPage({Key? key}) : super(key: key);
@@ -14,14 +13,48 @@ class EmailSignUpPage extends StatefulWidget {
 }
 
 class _EmailSignUpState extends State<EmailSignUpPage> {
-  // 入力したメールアドレス・パスワード
-  String email = '';
-  String password = '';
-  bool hidePassword = true;
   String errorMessage = '';
+  bool hidePassword = true;
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  /// メールアドレスでユーザー登録
+  Future<void> _signUp() async {
+    final authVM = context.read<AuthViewModel>(); // ViewModelを取得
+
+    try {
+      await authVM.signUpWithEmail(
+        emailController.text,
+        passwordController.text,
+      );
+      // 登録成功時、currentUser がセットされているはず
+      if (authVM.currentUser != null) {
+        // 画面遷移やメッセージ表示などのUIロジック
+        debugPrint("ユーザ登録: ${authVM.currentUser!.toJson()}");
+        emailController.clear();
+        passwordController.clear();
+
+        // 例: 登録後はログイン画面へ飛ばす
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const EmailLoginPage()),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      setState(() {
+        // FirebaseAuthException の場合はユーザに分かりやすいメッセージを
+        errorMessage = e.message ?? '登録に失敗しました。';
+      });
+      debugPrint('FirebaseAuthException: $e');
+    } catch (e) {
+      // 予期せぬ例外
+      setState(() {
+        errorMessage = 'エラーが発生しました: $e';
+      });
+      debugPrint('Exception: $e');
+    }
+  }
 
   @override
   void dispose() {
@@ -30,40 +63,15 @@ class _EmailSignUpState extends State<EmailSignUpPage> {
     super.dispose();
   }
 
-  Future<void> createUserDocument(String userId) async {
-    try {
-      // ！！！！！！！！！！！！！！！！！！！！
-      // ！！！！！ユーザーの初期化処理！！！！！
-      // ！！！！！！！！！！！！！！！！！！！！
-
-      // // Firestoreにユーザードキュメントを作成
-      // await FirebaseFirestore.instance.collection('users').doc(userId).set({
-      //   'email': email,
-      //   'createdAt': FieldValue.serverTimestamp(),
-      //   'username': '',
-      // });
-      // Firestoreにユーザードキュメントを作成
-      await FirebaseFirestore.instance.collection('users').doc(userId).set({
-        'email': email,
-        'createdAt': FieldValue.serverTimestamp(),
-        'username': '',
-        'selectedGenres': [],
-      });
-
-      print('ユーザードキュメントとコレクションを作成しました');
-    } catch (e) {
-      print('ユーザードキュメントの作成中にエラーが発生しました: $e');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('ログイン'),
-        ),
-        body: BackgroundAnimation1(
-          size: MediaQuery.of(context).size,
+      appBar: AppBar(
+        title: const Text('アカウント登録'),
+      ),
+      body: BackgroundAnimation1(
+        size: MediaQuery.of(context).size,
+        child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Center(
@@ -77,19 +85,18 @@ class _EmailSignUpState extends State<EmailSignUpPage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                  const SizedBox(height: 15),
                   TextFormField(
+                    controller: emailController,
                     decoration: const InputDecoration(
                       icon: Icon(Icons.mail),
-                      hintText: 'hogehoge@email.com',
+                      hintText: 'example@email.com',
                       labelText: 'Email Address',
                     ),
-                    onChanged: (String value) {
-                      setState(() {
-                        email = value;
-                      });
-                    },
                   ),
+                  const SizedBox(height: 15),
                   TextFormField(
+                    controller: passwordController,
                     obscureText: hidePassword,
                     decoration: InputDecoration(
                       icon: const Icon(Icons.lock),
@@ -107,50 +114,26 @@ class _EmailSignUpState extends State<EmailSignUpPage> {
                         },
                       ),
                     ),
-                    onChanged: (String value) {
-                      setState(() {
-                        password = value;
-                      });
-                    },
                   ),
                   const SizedBox(height: 15),
                   ElevatedButton(
                     child: const Text('登録'),
-                    onPressed: () async {
-                      try {
-                        final User? user = (await FirebaseAuth.instance
-                                .createUserWithEmailAndPassword(
-                                    email: email, password: password))
-                            .user;
-                        if (user != null) {
-                          print("ユーザ登録しました ${user.email} , ${user.uid}");
-                          await createUserDocument(user.uid);
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => EmailLoginPage()));
-                        }
-                      } catch (e) {
-                        // エラーが発生した場合
-                        setState(() {
-                          errorMessage = e.toString();
-                        });
-                        print(e);
-                      }
-                    },
+                    onPressed: _signUp,
                   ),
                   if (errorMessage.isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.only(top: 16.0),
                       child: Text(
                         errorMessage,
-                        style: TextStyle(color: Colors.red),
+                        style: const TextStyle(color: Colors.red),
                       ),
                     ),
                 ],
               ),
             ),
           ),
-        ));
+        ),
+      ),
+    );
   }
 }

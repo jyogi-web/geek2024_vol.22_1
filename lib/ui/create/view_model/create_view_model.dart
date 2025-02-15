@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:aicharamaker/model/profile_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+import 'package:aicharamaker/ui/home/home_page.dart';
+import 'package:aicharamaker/ui/auth/view/auth_page.dart';
 
 class CreateScreenViewModel extends ChangeNotifier {
   // 入力されるテキストを管理するコントローラー
@@ -25,17 +25,19 @@ class CreateScreenViewModel extends ChangeNotifier {
   final TextEditingController concernsController = TextEditingController();
   final TextEditingController remarksController = TextEditingController();
 
-  /// 入力された内容から ProfileModel を生成し、ログ出力などを行う
-  Future<void> submitProfile() async {
-    final profileId = FirebaseFirestore.instance
-        .collection('profiles')
-        .doc()
-        .id; // ドキュメントIDを自動生成
-    final user = FirebaseAuth.instance.currentUser; // ログインユーザー情報を取得
+  /// 入力された内容から ProfileModel を生成し、Firestore に保存してポップアップを表示
+  Future<void> submitProfile(BuildContext context) async {
+    final profileId =
+        FirebaseFirestore.instance.collection('profiles').doc().id;
+    final user = FirebaseAuth.instance.currentUser;
 
     if (user == null) {
-      // ログインしていない場合はエラーを出力して処理を中断
       debugPrint('User is not logged in');
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => AuthPage(),
+        ),
+      );
       return;
     }
 
@@ -44,7 +46,6 @@ class CreateScreenViewModel extends ChangeNotifier {
       userId: user.uid,
       userName: user.displayName ?? 'No Name',
       name: nameController.text,
-      // タグはスペース区切りでリスト化
       tag: tagController.text.split(' ').map((tag) => tag.trim()).toList(),
       description: descriptionController.text,
       imageUrl: imageUrlController.text,
@@ -53,7 +54,6 @@ class CreateScreenViewModel extends ChangeNotifier {
       height: heightController.text,
       bloodType: bloodTypeController.text,
       age: ageController.text,
-      // 趣味もスペース区切りでリスト化
       hobbies: hobbiesController.text
           .split(' ')
           .map((hobby) => hobby.trim())
@@ -64,44 +64,39 @@ class CreateScreenViewModel extends ChangeNotifier {
       likesDislikes: likesDislikesController.text,
       concerns: concernsController.text,
       remarks: remarksController.text,
-      createdBy: FirebaseAuth.instance.currentUser!.uid,
+      createdBy: user.uid,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
     );
 
-    // 送信内容の確認用ログ
-    debugPrint('Profile Submitted: '
-        'ID: ${profile.id}, '
-        'UserID: ${profile.userId}, '
-        'UserName: ${profile.userName}, '
-        'Name: ${profile.name}, '
-        'Tag: ${profile.tag}, '
-        'Description: ${profile.description}, '
-        'ImageUrl: ${profile.imageUrl}, '
-        'Gender: ${profile.gender}, '
-        'Personality: ${profile.personality}, '
-        'Height: ${profile.height}, '
-        'BloodType: ${profile.bloodType}, '
-        'Age: ${profile.age}, '
-        'Hobbies: ${profile.hobbies}, '
-        'FamilyStructure: ${profile.familyStructure}, '
-        'BirthDate: ${profile.birthDate}, '
-        'OtherDetails: ${profile.otherDetails}, '
-        'LikesDislikes: ${profile.likesDislikes}, '
-        'Concerns: ${profile.concerns}, '
-        'Remarks: ${profile.remarks}'
-        'CreatedBy: ${profile.createdBy}, '
-        'CreatedAt: ${profile.createdAt}, '
-        'UpdatedAt: ${profile.updatedAt}');
-
-    // ここで実際のデータ保存や画面遷移、API通信などの処理を行う
     // Firestore へのデータ保存
     await FirebaseFirestore.instance
         .collection('profiles')
         .doc(profileId)
         .set(profile.toJson());
-    // Navigator による画面遷移
-    navigatorKey.currentState?.pushReplacementNamed('/userScreen');
+
+    showDialog(
+      context: context, // 受け取ったcontextを使う
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('保存成功'),
+          content: const Text('プロフィールが保存されました。'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // ダイアログを閉じる
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => MainScreen(),
+                  ),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   /// ViewModelを破棄するときにコントローラを解放

@@ -1,16 +1,74 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:aicharamaker/ui/create/view_model/create_view_model.dart';
+import 'package:aicharamaker/ui/auth/view/auth_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
-/// UI定義側 (MVVMパターンの "View" 相当)。
-/// ViewModelを使って入力フォームとボタンを表示し、ユーザー入力を受け付ける。
 class CreateScreen extends StatelessWidget {
-  const CreateScreen({Key? key}) : super(key: key);
+  CreateScreen({Key? key}) : super(key: key);
+  String? _fileName;
+
+  // ユーザーがログインしているかどうかを判定するメソッド
+  bool _isUserLoggedIn(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+    print('user: $user');
+    if (user != null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<void> _pickImage(CreateScreenViewModel viewModel) async {
+    // 画像をfirebase storageにアップロードする処理
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+      allowMultiple: false,
+    );
+    if (result == null) {
+      return;
+    }
+    final file = result.files.single;
+
+    _fileName = file.name;
+    final storageRef =
+        FirebaseStorage.instance.ref().child('uploads/${file.name}');
+    final uploadTask = storageRef.putData(file.bytes!);
+
+    await uploadTask.whenComplete(() async {
+      final downloadUrl = await storageRef.getDownloadURL();
+      viewModel.imageUrlController.text = downloadUrl;
+      print('Download URL: $downloadUrl');
+    });
+    // print('file: $file');
+  }
 
   @override
   Widget build(BuildContext context) {
-    /// ChangeNotifierProvider を使って ViewModel を提供
-    /// （別画面から受け取る場合などはスコープに合わせて書き方を変える）
+    final isLoggedIn = _isUserLoggedIn(context);
+    print('isLoggedIn: $isLoggedIn');
+    // ログインしていない場合、AuthPage()への遷移ボタンのみを表示
+    if (!isLoggedIn) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text("キャラ作成"),
+        ),
+        body: Center(
+          child: ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const AuthPage()),
+              );
+            },
+            child: const Text("ログインして作成する"),
+          ),
+        ),
+      );
+    }
+
     return ChangeNotifierProvider(
       create: (_) => CreateScreenViewModel(),
       child: Scaffold(
@@ -54,7 +112,11 @@ class CreateScreen extends StatelessWidget {
                       border: OutlineInputBorder(),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () => _pickImage(viewModel),
+                    child: Text('ファイルを選択'),
+                  ),
+                  SizedBox(height: 20),
                   TextField(
                     controller: viewModel.genderController,
                     decoration: const InputDecoration(
@@ -155,18 +217,10 @@ class CreateScreen extends StatelessWidget {
                   const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {
-                      // ViewModelの submitProfile を呼び出す
-                      viewModel.submitProfile();
+                      viewModel.submitProfile(context); // contextを渡す
                     },
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 15,
-                        horizontal: 50,
-                      ),
-                      textStyle: const TextStyle(fontSize: 18),
-                    ),
                     child: const Text("決定！"),
-                  ),
+                  )
                 ],
               ),
             );
