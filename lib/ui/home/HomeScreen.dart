@@ -125,7 +125,8 @@ class CustomSearchDelegate extends SearchDelegate {
           itemCount: profiles.length,
           itemBuilder: (context, index) {
             var profile = profiles[index].data() as Map<String, dynamic>;
-            return ProfileCard(profile: profile);
+            return ProfileCard(
+                profile: profile, documentId: profiles[index].id);
           },
         );
       },

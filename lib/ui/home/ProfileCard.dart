@@ -102,16 +102,16 @@ class _ProfileCardState extends State<ProfileCard> {
           title: Text(widget.profile['name'] ?? '名前なし'),
           subtitle: Row(
             children: [
-              if (profile['tag'] != null)
-                ...profile['tag'].map<Widget>((tag) => _buildTag(tag)).toList(),
+              if (widget.profile['tag'] != null)
+                ...widget.profile['tag']
+                    .map<Widget>((tag) => _buildTag(tag))
+                    .toList(),
             ],
           ),
           trailing: IconButton(
             icon: Icon(
-              profile['isFavorite'] == true
-                  ? Icons.favorite
-                  : Icons.favorite_border,
-              color: profile['isFavorite'] == true ? Colors.red : null,
+              isFavorite ? Icons.favorite : Icons.favorite_border,
+              color: isFavorite ? Colors.red : null,
             ),
             onPressed: () => _toggleFavorite(context),
           ),
