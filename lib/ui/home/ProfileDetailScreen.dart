@@ -59,6 +59,17 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                     },
                     child: Text("このキャラでチャットする"),
                   ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChatPage(profile: profile),
+                        ),
+                      );
+                    },
+                    child: Text("このキャラでチャットする"),
+                  ),
                   SizedBox(height: 16),
                 ],
               ),
@@ -66,6 +77,66 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
           );
         },
       ),
+    );
+  }
+
+  // プロフィール情報の表示用
+  Widget _buildProfileSection(String title, List<Widget> children) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 16),
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 4,
+            spreadRadius: 2,
+            offset: Offset(2, 2),
+          )
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue)),
+          SizedBox(height: 8),
+          ...children,
+        ],
+      ),
+    );
+  }
+
+  // プロフィールの項目を整える
+  Widget _buildProfileRow(String label, dynamic value) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 8),
+      child: Row(
+        children: [
+          Text("$label: ", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          Expanded(
+            child: Text(
+              value != null ? value.toString() : '不明',
+              style: TextStyle(fontSize: 16),
+              overflow: TextOverflow.ellipsis,
+
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // タグ表示用
+  Widget _buildTag(String tag) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: Colors.blue.shade100,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(tag, style: TextStyle(fontSize: 14, color: Colors.blue.shade900)),
     );
   }
 }

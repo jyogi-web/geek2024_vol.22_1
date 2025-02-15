@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:firebase_auth/firebase_auth.dart'; // Firebase Auth をインポート
-
-// 画面遷移のためのWidget
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:aicharamaker/ui/chat/view/chat_page.dart';
 import 'package:aicharamaker/ui/home/HomeScreen.dart';
 import 'package:aicharamaker/ui/create/view/create_page.dart';
 import 'package:aicharamaker/ui/favorite/favorite_page.dart';
 import 'package:aicharamaker/ui/home/ProfileCard.dart'; // プロフィールカードのインポート
 import 'package:aicharamaker/ui/home/ProfileDetailScreen.dart'; // プロフィール詳細画面
+import 'package:aicharamaker/ui/auth/view/auth_page.dart';
 import 'package:aicharamaker/ui/user/user_page.dart';
 import 'package:aicharamaker/ui/auth/view/auth_page.dart';
 import 'package:aicharamaker/ui/user/user_page.dart';
@@ -72,8 +72,16 @@ class _MainScreenState extends State<MainScreen> {
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
         backgroundColor: Colors.white,
         elevation: 0,
-        actions: [],
         titleTextStyle: TextStyle(color: Colors.black),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.search, color: Colors.black),
+            onPressed: () {
+              // 検索機能の処理をここに追加
+              showSearch(context: context, delegate: CustomSearchDelegate());
+            },
+          ),
+        ],
       ),
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
