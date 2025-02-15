@@ -4,35 +4,22 @@ import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import '../view_model/chat_view_model.dart';
 
 class ChatPage extends StatefulWidget {
-  const ChatPage({super.key});
+  final Map<String, dynamic> profile;
+
+  const ChatPage({super.key, required this.profile});
 
   @override
   State<ChatPage> createState() => _ChatPageState();
 }
 
-class ChatL10nJa extends ChatL10n {
-  const ChatL10nJa({
-    super.attachmentButtonAccessibilityLabel = '画像アップロード',
-    super.emptyChatPlaceholder = 'メッセージがありません。',
-    super.fileButtonAccessibilityLabel = 'ファイル',
-    super.inputPlaceholder = 'メッセージを入力してください',
-    super.sendButtonAccessibilityLabel = '送信',
-  }) : super(
-          and: 'と',
-          isTyping: 'が入力中',
-          others: '他',
-          unreadMessagesLabel: '未読メッセージ',
-        );
-}
-
 class _ChatPageState extends State<ChatPage> {
   final ChatController _chatController = ChatController();
-  final _user = types.User(id: 'my_user_id'); // 自分のユーザーIDを適宜設定
+  final _user = types.User(id: 'my_user_id');
 
   @override
   void initState() {
     super.initState();
-    _chatController.initialize(); // 初期化
+    _chatController.initialize();
   }
 
   @override
@@ -43,21 +30,20 @@ class _ChatPageState extends State<ChatPage> {
         author: types.User(id: m.sender),
         createdAt: m.createdAt.millisecondsSinceEpoch,
         text: m.text,
-      ) as types.Message;  // Message 型にキャスト
+      ) as types.Message;
     }).toList();
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Chat with Gemini'),
+        title: Text("Chat with ${widget.profile['name']}"),
       ),
       body: Chat(
         user: _user,
-        messages: chatMessages.reversed.toList(), // メッセージの順番を逆にする
+        messages: chatMessages.reversed.toList(),
         showUserAvatars: true,
         showUserNames: true,
-        l10n: const ChatL10nJa(),
         onSendPressed: (types.PartialText partialText) {
-          _chatController.onSendPressed(setState, partialText.text);
+          _chatController.onSendPressed(setState, partialText.text, widget.profile);
         },
       ),
     );
