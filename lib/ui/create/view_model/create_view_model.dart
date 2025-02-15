@@ -75,6 +75,13 @@ class CreateScreenViewModel extends ChangeNotifier {
         .doc(profileId)
         .set(profile.toJson());
 
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('createdProfiles')
+        .doc(profileId)
+        .set(profile.toJson());
+
     showDialog(
       context: context, // 受け取ったcontextを使う
       builder: (BuildContext context) {
