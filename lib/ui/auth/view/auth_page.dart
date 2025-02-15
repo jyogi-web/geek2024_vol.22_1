@@ -7,6 +7,7 @@ import 'package:aicharamaker/ui/auth/view_model/auth_view_model.dart';
 import 'email_login_page.dart';
 import 'email_sign_up_page.dart';
 import 'package:aicharamaker/ui/home/home_page.dart';
+import 'package:aicharamaker/ui/user/user_create_list_page.dart';
 
 class AuthPage extends StatelessWidget {
   const AuthPage({Key? key}) : super(key: key);
@@ -149,6 +150,23 @@ class AuthPage extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => AuthPage()),
+                            );
+                          },
+                        ),
+                      ),
+                       Container(
+                        width: 300,
+                        margin: EdgeInsets.all(10),
+                        child: ElevatedButton(
+                          child: const Text(
+                            'ユーザー作成profile一覧',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          onPressed: () async {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => UserCreateListScreen()),
                             );
                           },
                         ),
