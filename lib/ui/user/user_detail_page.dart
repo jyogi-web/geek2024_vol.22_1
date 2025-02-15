@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:aicharamaker/model/user_model.dart';
 import 'package:aicharamaker/ui/auth/view_model/auth_view_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:aicharamaker/ui/user/user_profile_edit_page.dart';
 
 class UserDetailScreen extends StatefulWidget {
   const UserDetailScreen({Key? key}) : super(key: key);
@@ -95,6 +96,20 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                           subtitle: Text(user.uid ?? 'No uid'),
                         ),
                       ],
+                    ),
+                    const SizedBox(height: 12),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size.fromHeight(48),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => UserProfileEditPage()),
+                        );
+                      },
+                      child: const Text('お気に入り画面へ'),
                     ),
                   ],
                 ),
