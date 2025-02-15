@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:firebase_auth/firebase_auth.dart'; // Firebase Auth をインポート
 
 // 画面遷移のためのWidget
+
 import 'package:aicharamaker/ui/chat/view/chat_page.dart';
-import 'package:aicharamaker/ui/auth/view/auth_page.dart';
-import 'package:aicharamaker/ui/create/view/create_page.dart';
 import 'package:aicharamaker/ui/home/HomeScreen.dart';
+import 'package:aicharamaker/ui/create/view/create_page.dart';
 import 'package:aicharamaker/ui/favorite/favorite_page.dart';
+
 import 'package:aicharamaker/ui/home/ProfileCard.dart'; // プロフィールカードのインポート
 import 'package:aicharamaker/ui/home/ProfileDetailScreen.dart'; // プロフィール詳細画面
+
+import 'package:aicharamaker/ui/auth/view/auth_page.dart';
+
 
 class MainScreen extends StatefulWidget {
   @override
@@ -18,14 +23,31 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
+  Map<String, dynamic>? _selectedProfile;
 
-  final List<Widget> _screens = [
-    HomeScreen(),
-    CreateScreen(),
-    ChatPage(),
-    FavoriteScreen(),
-    AuthPage(),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _fetchFavoriteProfile();  // お気に入りのキャラを取得
+  }
+
+  void _fetchFavoriteProfile() async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) return;
+
+    final snapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(currentUser.uid)
+        .collection('likedProfiles')
+        .limit(1) // 最初のお気に入りを取得
+        .get();
+
+    if (snapshot.docs.isNotEmpty) {
+      setState(() {
+        _selectedProfile = snapshot.docs.first.data();
+      });
+    }
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -35,6 +57,16 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> _screens = [
+      HomeScreen(),
+      CreateScreen(),
+      _selectedProfile != null
+          ? ChatPage(profile: _selectedProfile!)
+          : Center(child: Text("お気に入りのキャラがありません")),
+      FavoriteScreen(),
+      AuthPage(),
+    ];
+
     return Scaffold(
       appBar: AppBar(
         title: Text("ぷろふぃーるはぶ",
@@ -44,6 +76,8 @@ class _MainScreenState extends State<MainScreen> {
         actions: [
           
         ]
+        titleTextStyle: TextStyle(color: Colors.black),
+
       ),
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
