@@ -15,12 +15,15 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100], // 背景色を淡いグレーに
+      backgroundColor: Colors.purple.shade50,
       appBar: AppBar(
-        title: Text("ぷろふぃーる詳細",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        title: Text(
+          "ぷろふぃーる詳細",
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
+        ),
         backgroundColor: Colors.white,
-        elevation: 1,
+        elevation: 2,
+        iconTheme: IconThemeData(color: Colors.black),
       ),
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
@@ -58,7 +61,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                   // 名前
                   Text(
                     profile['name'] ?? '名前なし',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
                   ),
                   SizedBox(height: 8),
 
@@ -74,6 +77,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
 
                   // プロフィール情報
                   _buildProfileSection("基本情報", [
+                    _buildProfileRow("タグ", profile['tag']),
                     _buildProfileRow("説明", profile['description']),
                     _buildProfileRow("性別", profile['gender']),
                     _buildProfileRow("誕生日", profile['birthDate']),
@@ -94,33 +98,59 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                     _buildProfileRow("その他（話し方など）", profile['otherDetails']),
                   ]),
 
-                  SizedBox(height: 16),
-
-                  // 一覧画面に戻るボタン
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                    ),
-                    child: Text("一覧画面へ戻る",
-                        style: TextStyle(fontSize: 16, color: Colors.white)),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ChatPage(profile: profile),
+    SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: Colors.deepPurpleAccent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                         ),
-                      );
-                    },
-                    child: Text("このキャラでチャットする"),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.arrow_back, size: 20),
+                            SizedBox(width: 8),
+                            Text("一覧画面へ戻る", style: TextStyle(fontSize: 16)),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 16),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ChatPage(profile: profile),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: Colors.blueAccent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.chat, size: 20),
+                            SizedBox(width: 8),
+                            Text("このキャラでチャットする", style: TextStyle(fontSize: 16)),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                   SizedBox(height: 16),
                 ],
@@ -132,7 +162,9 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
     );
   }
 
+
   // プロフィール情報の表示用
+// プロフィール情報の表示用
   Widget _buildProfileSection(String title, List<Widget> children) {
     return Container(
       margin: EdgeInsets.only(bottom: 16),
@@ -164,6 +196,8 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
     );
   }
 
+
+      
   // プロフィールの項目を整える
   Widget _buildProfileRow(String label, dynamic value) {
     return Padding(
