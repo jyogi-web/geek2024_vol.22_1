@@ -154,7 +154,7 @@ class AuthPage extends StatelessWidget {
                           },
                         ),
                       ),
-                       Container(
+                      Container(
                         width: 300,
                         margin: EdgeInsets.all(10),
                         child: ElevatedButton(
@@ -171,17 +171,6 @@ class AuthPage extends StatelessWidget {
                           },
                         ),
                       ),
-
-                      const SizedBox(height: 20),
-                      // ログインユーザ情報を表示する例
-                      if (authVM.currentUser != null) ...[
-                        Text('ログイン中ユーザ:'),
-                        Text('UID: ${authVM.currentUser?.uid}'),
-                        Text('Name: ${authVM.currentUser?.name}'),
-                        Text('Email: ${authVM.currentUser?.email}'),
-                      ] else ...[
-                        const Text('未ログインです。'),
-                      ],
                     ],
                   ),
                 ),

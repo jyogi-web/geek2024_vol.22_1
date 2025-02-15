@@ -9,12 +9,11 @@ import 'package:aicharamaker/ui/chat/view/chat_page.dart';
 import 'package:aicharamaker/ui/home/HomeScreen.dart';
 import 'package:aicharamaker/ui/create/view/create_page.dart';
 import 'package:aicharamaker/ui/favorite/favorite_page.dart';
-
 import 'package:aicharamaker/ui/home/ProfileCard.dart'; // プロフィールカードのインポート
 import 'package:aicharamaker/ui/home/ProfileDetailScreen.dart'; // プロフィール詳細画面
-
+import 'package:aicharamaker/ui/user/user_page.dart';
 import 'package:aicharamaker/ui/auth/view/auth_page.dart';
-
+import 'package:aicharamaker/ui/user/user_page.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -28,7 +27,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-    _fetchFavoriteProfile();  // お気に入りのキャラを取得
+    _fetchFavoriteProfile(); // お気に入りのキャラを取得
   }
 
   void _fetchFavoriteProfile() async {
@@ -64,7 +63,7 @@ class _MainScreenState extends State<MainScreen> {
           ? ChatPage(profile: _selectedProfile!)
           : Center(child: Text("お気に入りのキャラがありません")),
       FavoriteScreen(),
-      AuthPage(),
+      UserScreen(),
     ];
 
     return Scaffold(
@@ -73,11 +72,8 @@ class _MainScreenState extends State<MainScreen> {
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
         backgroundColor: Colors.white,
         elevation: 0,
-        actions: [
-          
-        ]
+        actions: [],
         titleTextStyle: TextStyle(color: Colors.black),
-
       ),
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -109,7 +105,9 @@ class ProfileSearchDelegate extends SearchDelegate {
       },
     );
   }
-  final String? userId = FirebaseAuth.instance.currentUser?.uid; // ログインユーザーの ID を取得
+
+  final String? userId =
+      FirebaseAuth.instance.currentUser?.uid; // ログインユーザーの ID を取得
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -123,7 +121,6 @@ class ProfileSearchDelegate extends SearchDelegate {
     ];
   }
 
-  
   @override
   Widget buildResults(BuildContext context) {
     if (userId == null) {
@@ -151,7 +148,8 @@ class ProfileSearchDelegate extends SearchDelegate {
           itemCount: profiles.length,
           itemBuilder: (context, index) {
             var profileData = profiles[index].data() as Map<String, dynamic>;
-            return ProfileCard(profile: profileData, documentId: profiles[index].id);
+            return ProfileCard(
+                profile: profileData, documentId: profiles[index].id);
           },
         );
       },
@@ -189,7 +187,8 @@ class ProfileSearchDelegate extends SearchDelegate {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ProfileDetailScreen(documentId: profiles[index].id),
+                    builder: (context) =>
+                        ProfileDetailScreen(documentId: profiles[index].id),
                   ),
                 );
               },
