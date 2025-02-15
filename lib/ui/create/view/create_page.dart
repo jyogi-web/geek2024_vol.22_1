@@ -35,7 +35,10 @@ class CreateScreen extends StatelessWidget {
     _fileName = file.name;
     final storageRef =
         FirebaseStorage.instance.ref().child('uploads/${file.name}');
-    final uploadTask = storageRef.putData(file.bytes!);
+    final metadata = SettableMetadata(
+      contentType: 'image/png',
+    );
+    final uploadTask = storageRef.putData(file.bytes!, metadata);
 
     await uploadTask.whenComplete(() async {
       final downloadUrl = await storageRef.getDownloadURL();
