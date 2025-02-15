@@ -38,13 +38,15 @@ class ProfileCard extends StatelessWidget {
           title: Text(profile['name'] ?? '名前なし'),
           subtitle: Row(
             children: [
-              if (profile['tag1'] != null) _buildTag(profile['tag1']),
-              if (profile['tag2'] != null) _buildTag(profile['tag2']),
+              if (profile['tag'] != null)
+                ...profile['tag'].map<Widget>((tag) => _buildTag(tag)).toList(),
             ],
           ),
           trailing: IconButton(
             icon: Icon(
-              profile['isFavorite'] == true ? Icons.favorite : Icons.favorite_border,
+              profile['isFavorite'] == true
+                  ? Icons.favorite
+                  : Icons.favorite_border,
               color: profile['isFavorite'] == true ? Colors.red : null,
             ),
             onPressed: _toggleFavorite,
@@ -54,7 +56,7 @@ class ProfileCard extends StatelessWidget {
     );
   }
 
-  Widget _buildTag(String tag) {
+  Widget _buildTag(tag) {
     return Container(
       margin: EdgeInsets.only(right: 4),
       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
