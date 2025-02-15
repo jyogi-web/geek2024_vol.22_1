@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ProfileDetailScreen extends StatefulWidget {
   final String documentId;
@@ -11,8 +12,8 @@ class ProfileDetailScreen extends StatefulWidget {
 }
 
 class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
-  bool isFavorite = false;
   Map<String, dynamic>? profile;
+  bool isFavorite = false; // isFavoriteは不要でしたが、お気に入りの状態を管理するために利用します
 
   @override
   void initState() {
@@ -20,26 +21,66 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
     _fetchProfileData();
   }
 
-  // Firestore からプロフィールデータを取得
+  // Firestoreからプロフィールデータを取得
   void _fetchProfileData() async {
-    DocumentSnapshot doc = await FirebaseFirestore.instance.collection('profiles').doc(widget.documentId).get();
-    if (doc.exists) {
+    try {
+      DocumentSnapshot doc = await FirebaseFirestore.instance.collection('profiles').doc(widget.documentId).get();
+      if (doc.exists) {
+        setState(() {
+          profile = doc.data() as Map<String, dynamic>?;
+          _checkUserFavoriteStatus();
+        });
+      }
+    } catch (e) {
+      print("Error fetching profile data: $e");
+    }
+  }
+
+  // ユーザーのお気に入り状態を確認
+  void _checkUserFavoriteStatus() async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      // ユーザーの`likedProfiles`コレクションからプロフィールが存在するかチェック
+      DocumentSnapshot likedProfileDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser.uid)
+          .collection('likedProfiles')
+          .doc(widget.documentId)
+          .get();
+
       setState(() {
-        profile = doc.data() as Map<String, dynamic>?;
-        isFavorite = profile?['isFavorite'] ?? false;
+        isFavorite = likedProfileDoc.exists;
       });
     }
   }
 
   // お気に入りを切り替える
-  void _toggleFavorite() {
+  void _toggleFavorite() async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("ログインしてください")));
+      return;
+    }
+
     setState(() {
       isFavorite = !isFavorite;
     });
 
-    FirebaseFirestore.instance.collection('profiles').doc(widget.documentId).update({
-      'isFavorite': isFavorite,
-    });
+    // Firestoreで`likedProfiles`におけるプロフィールの追加・削除
+    if (isFavorite) {
+      // お気に入り追加
+      await FirebaseFirestore.instance.collection('users').doc(currentUser.uid)
+          .collection('likedProfiles').doc(widget.documentId)
+          .set({'isFavorite': true}, SetOptions(merge: true));
+    } else {
+      // お気に入り削除
+      await FirebaseFirestore.instance.collection('users').doc(currentUser.uid)
+          .collection('likedProfiles').doc(widget.documentId)
+          .delete();
+    }
+
+    // UIに反映
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(isFavorite ? "お気に入りに追加しました" : "お気に入りを解除しました")));
   }
 
   @override
@@ -57,12 +98,15 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("ぷろふぃーる画面"),
+        title: Text("プロフィール詳細"),
         backgroundColor: Colors.white,
         elevation: 0,
         actions: [
           IconButton(
-            icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border, color: isFavorite ? Colors.red : null),
+            icon: Icon(
+              isFavorite ? Icons.favorite : Icons.favorite_border,
+              color: isFavorite ? Colors.red : Colors.black,
+            ),
             onPressed: _toggleFavorite,
           ),
         ],
@@ -102,7 +146,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: Text("一覧画面"),
+                child: Text("一覧画面に戻る"),
               ),
             ),
           ],
