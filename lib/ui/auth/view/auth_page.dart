@@ -45,9 +45,15 @@ class AuthPage extends StatelessWidget {
                             size: 24.0,
                           ),
                           const SizedBox(width: 8),
-                          const Text('メールアドレスでログイン'),
+                          Expanded(
+                            child: Center(
+                          child: const Text('メールアドレスでログイン',
+                          style: TextStyle(color: Colors.black),
+                            ),
+                          ),
+                         ),
                         ],
-                      ),
+                       ),
                       onPressed: () {
                         Navigator.push(
                           context,
@@ -73,7 +79,13 @@ class AuthPage extends StatelessWidget {
                             size: 24.0,
                           ),
                           const SizedBox(width: 8),
-                          const Text('GitHubでログイン'),
+                          Expanded(
+                          child: Center(
+                          child: const Text('GitHubでログイン',
+                          style: TextStyle(color: Colors.black),
+                            ),
+                           ),
+                          ),
                         ],
                       ),
                       onPressed: () async {
@@ -104,7 +116,13 @@ class AuthPage extends StatelessWidget {
                             size: 24.0,
                           ),
                           const SizedBox(width: 8),
-                          const Text('メールアドレスでアカウント登録'),
+                          Expanded(
+                          child: Center(
+                          child: const Text('メールアドレスでアカウント登録',
+                          style: TextStyle(color: Colors.black),
+                            ),
+                           ),
+                          ),
                         ],
                       ),
                       onPressed: () {
@@ -121,7 +139,9 @@ class AuthPage extends StatelessWidget {
                       width: 300,
                       margin: EdgeInsets.all(10),
                       child:ElevatedButton(
-                      child: const Text('ログアウト'),
+                      child: const Text('ログアウト',
+                      style: TextStyle(color: Colors.black),
+                    ),
                       onPressed: () async {
                         await authVM.signOut();
                         Navigator.push(
