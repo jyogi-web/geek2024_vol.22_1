@@ -85,10 +85,10 @@ class ProfileCard extends StatelessWidget {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (profile['personality'] != null)
-              Text(profile['personality'], style: TextStyle(fontSize: 14)),
+            if (profile['remarks'] != null)
+              Text(profile['remarks'], style: TextStyle(fontSize: 14)),
             if (profile['description'] != null)
-              Text(profile['description'], style: TextStyle(fontSize: 12, color: Colors.grey)),
+              Text(profile['description'], style: TextStyle(fontSize: 13, color: Colors.grey)),
           ],
         ),
         trailing: Icon(Icons.favorite_border),
