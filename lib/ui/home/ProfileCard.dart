@@ -1,17 +1,79 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // FirebaseAuthのインポート
+
 import 'ProfileDetailScreen.dart';
 
-class ProfileCard extends StatelessWidget {
+class ProfileCard extends StatefulWidget {
   final Map<String, dynamic> profile;
   final String documentId;
 
   ProfileCard({required this.profile, required this.documentId});
 
-  void _toggleFavorite() {
-    bool isFavorite = profile['isFavorite'] ?? false;
-    FirebaseFirestore.instance.collection('profiles').doc(documentId).update({
-      'isFavorite': !isFavorite,
+  @override
+  _ProfileCardState createState() => _ProfileCardState();
+}
+
+class _ProfileCardState extends State<ProfileCard> {
+  bool isFavorite = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkFavoriteStatus();
+  }
+
+  // ユーザーがこのプロフィールをお気に入りにしているか確認する
+  void _checkFavoriteStatus() async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) return;
+
+    // Firestoreの`likedProfiles`コレクションにプロフィールがあるか確認
+    DocumentSnapshot likedProfileDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(currentUser.uid)
+        .collection('likedProfiles')
+        .doc(widget.documentId)
+        .get();
+
+    setState(() {
+      isFavorite = likedProfileDoc.exists;
+    });
+  }
+
+  // お気に入りを切り替える
+  void _toggleFavorite(BuildContext context) async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("ログインしてください")));
+      return;
+    }
+
+    if (isFavorite) {
+      // お気に入り解除
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser.uid)
+          .collection('likedProfiles')
+          .doc(widget.documentId)
+          .delete();
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("お気に入りを解除しました")));
+    } else {
+      // お気に入り追加
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser.uid)
+          .collection('likedProfiles')
+          .doc(widget.documentId)
+          .set({'isFavorite': true});
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("お気に入りに追加しました")));
+    }
+
+    setState(() {
+      isFavorite = !isFavorite;
     });
   }
 
@@ -22,7 +84,8 @@ class ProfileCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ProfileDetailScreen(documentId: documentId),
+            builder: (context) =>
+                ProfileDetailScreen(documentId: widget.documentId),
           ),
         );
       },
@@ -30,12 +93,13 @@ class ProfileCard extends StatelessWidget {
         margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
         child: ListTile(
           leading: CircleAvatar(
-            backgroundImage: profile['imageUrl'] != null
-                ? NetworkImage(profile['imageUrl'])
+            backgroundImage: widget.profile['imageUrl'] != null
+                ? NetworkImage(widget.profile['imageUrl'])
                 : null,
-            child: profile['imageUrl'] == null ? Icon(Icons.person) : null,
+            child:
+                widget.profile['imageUrl'] == null ? Icon(Icons.person) : null,
           ),
-          title: Text(profile['name'] ?? '名前なし'),
+          title: Text(widget.profile['name'] ?? '名前なし'),
           subtitle: Row(
             children: [
               if (profile['tag'] != null)
@@ -49,7 +113,7 @@ class ProfileCard extends StatelessWidget {
                   : Icons.favorite_border,
               color: profile['isFavorite'] == true ? Colors.red : null,
             ),
-            onPressed: _toggleFavorite,
+            onPressed: () => _toggleFavorite(context),
           ),
         ),
       ),

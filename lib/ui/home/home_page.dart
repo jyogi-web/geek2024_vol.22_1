@@ -9,7 +9,8 @@ import 'package:aicharamaker/ui/favorite/favorite_page.dart';
 
 class MainScreen extends StatefulWidget {
   @override
-  _MainScreenState createState() => _MainScreenState();}
+  _MainScreenState createState() => _MainScreenState();
+}
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
@@ -32,10 +33,20 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("ぷろふぃーるはぶ", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+        title: Text("ぷろふぃーるはぶ",
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
         backgroundColor: Colors.white,
         elevation: 0,
         titleTextStyle: TextStyle(color: Colors.black),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.search, color: Colors.black),
+            onPressed: () {
+              // 検索機能の処理をここに追加
+              showSearch(context: context, delegate: CustomSearchDelegate());
+            },
+          ),
+        ],
       ),
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -59,12 +70,50 @@ class _MainScreenState extends State<MainScreen> {
 // 各画面のWidget（仮のUIを表示）
 // これを各ページのファイルに分離して作成
 
-
-
-
 class UserScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(child: Text('ユーザー画面', style: TextStyle(fontSize: 24)));
+  }
+}
+
+// 検索機能のカスタムデリゲートを定義
+class CustomSearchDelegate extends SearchDelegate {
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(
+        icon: Icon(Icons.clear),
+        onPressed: () {
+          query = '';
+        },
+      ),
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      icon: Icon(Icons.arrow_back),
+      onPressed: () {
+        close(context, null);
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    // 検索結果を表示するウィジェットをここに追加
+    return Center(
+      child: Text('検索結果: $query'),
+    );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    // 検索候補を表示するウィジェットをここに追加
+    return Center(
+      child: Text('検索候補: $query'),
+    );
   }
 }
