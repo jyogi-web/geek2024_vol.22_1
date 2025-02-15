@@ -52,7 +52,7 @@ class _ChatPageState extends State<ChatPage> {
       ),
       body: Chat(
         user: _user,
-        messages: chatMessages,
+        messages: chatMessages.reversed.toList(), // メッセージの順番を逆にする
         showUserAvatars: true,
         showUserNames: true,
         l10n: const ChatL10nJa(),
