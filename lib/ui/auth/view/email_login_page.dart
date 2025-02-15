@@ -1,6 +1,9 @@
-import 'package:aicharamaker/ui/home/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart'; // Providerパッケージ
+
+import 'package:aicharamaker/ui/home/home_page.dart';
+import 'package:aicharamaker/ui/auth/view_model/auth_view_model.dart';
 import '../../components/background_animation.dart';
 
 class EmailLoginPage extends StatefulWidget {
@@ -13,6 +16,7 @@ class EmailLoginPage extends StatefulWidget {
 class _EmailLoginPage extends State<EmailLoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
   bool hidePassword = true;
   String errorMessage = '';
 
@@ -23,70 +27,66 @@ class _EmailLoginPage extends State<EmailLoginPage> {
     super.dispose();
   }
 
+  /// メールアドレス＆パスワードでログイン
   Future<void> _login() async {
+    final authVM = context.read<AuthViewModel>(); // ViewModel取得
+
     try {
-      final User? user = (await FirebaseAuth.instance
-              .signInWithEmailAndPassword(
-                  email: emailController.text,
-                  password: passwordController.text))
-          .user;
+      await authVM.signInWithEmail(
+        emailController.text,
+        passwordController.text,
+      );
+      // ログイン成功
+      if (authVM.currentUser != null) {
+        print("ログイン成功: ${authVM.currentUser!.toJson()}");
 
-      if (user != null) {
-        print("ログインしました ${user.email}, ${user.uid}");
-
+        // テキストフィールドクリア
         emailController.clear();
         passwordController.clear();
 
+        // メイン画面に遷移
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => MainScreen()),
         );
       }
-    } catch (e) {
+    } on FirebaseAuthException catch (e) {
       setState(() {
         errorMessage = 'メールアドレスまたはパスワードが間違っています';
+      });
+      print(e);
+    } catch (e) {
+      setState(() {
+        errorMessage = '予期せぬエラーが発生しました';
       });
       print(e);
     }
   }
 
+  /// テストログイン用
   Future<void> _testLogin() async {
-    try {
-      emailController.text = 'test@test.com';
-      passwordController.text = 'password';
+    // テストユーザのメールアドレスとパスワード
+    final testEmail = 'test@test.com';
+    final testPassword = 'password';
 
-      final User? user = (await FirebaseAuth.instance
-              .signInWithEmailAndPassword(
-                  email: emailController.text,
-                  password: passwordController.text))
-          .user;
+    emailController.text = testEmail;
+    passwordController.text = testPassword;
 
-      if (user != null) {
-        print("ログインしました ${user.email}, ${user.uid}");
-
-        emailController.clear();
-        passwordController.clear();
-
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => MainScreen()),
-        );
-      }
-    } catch (e) {
-      setState(() {
-        errorMessage = 'メールアドレスまたはパスワードが間違っています';
-      });
-      print(e);
-    }
+    await _login(); // 上記の _login() を使い回し
   }
 
+  /// パスワードリセット
   Future<void> _resetPassword() async {
+    final authVM = context.read<AuthViewModel>();
+
     try {
-      await FirebaseAuth.instance
-          .sendPasswordResetEmail(email: emailController.text);
-      print("${emailController.text}へパスワードリセット用のメールを送信しました");
+      await authVM.resetPassword(emailController.text);
+      // 必要に応じてユーザーに完了メッセージを表示
+      print("${emailController.text} へパスワードリセットメールを送信しました");
+    } on FirebaseAuthException catch (e) {
+      print('パスワードリセット失敗: $e');
     } catch (e) {
-      print(e);
+      print('不明なエラーです: $e');
     }
   }
 
@@ -96,7 +96,6 @@ class _EmailLoginPage extends State<EmailLoginPage> {
       body: BackgroundAnimation1(
         size: MediaQuery.of(context).size,
         child: SingleChildScrollView(
-          // スクロール可能に変更
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Column(
@@ -115,7 +114,7 @@ class _EmailLoginPage extends State<EmailLoginPage> {
                   controller: emailController,
                   decoration: const InputDecoration(
                     icon: Icon(Icons.mail),
-                    hintText: 'hogehoge@email.com',
+                    hintText: 'example@email.com',
                     labelText: 'Email Address',
                   ),
                 ),
@@ -143,10 +142,10 @@ class _EmailLoginPage extends State<EmailLoginPage> {
                   child: const Text('ログイン'),
                   onPressed: _login,
                 ),
-                // ElevatedButton(
-                //   child: const Text('テストログイン'),
-                //   onPressed: _testLogin,
-                // ),
+                ElevatedButton(
+                  child: const Text('テストログイン'),
+                  onPressed: _testLogin,
+                ),
                 ElevatedButton(
                   onPressed: _resetPassword,
                   child: const Text('パスワードリセット'),
