@@ -17,7 +17,6 @@ class _UserScreenState extends State<UserScreen> {
   void initState() {
     super.initState();
     // 非同期処理のタイミングでfetchUser()を呼び出す
-    // contextはlisten: falseで利用することで、initStateでも安全に使えます。
     Future.microtask(
         () => Provider.of<AuthViewModel>(context, listen: false).fetchUser());
   }

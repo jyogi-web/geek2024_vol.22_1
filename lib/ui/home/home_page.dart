@@ -7,6 +7,7 @@ import 'package:aicharamaker/ui/create/view/create_page.dart';
 import 'package:aicharamaker/ui/favorite/favorite_page.dart';
 import 'package:aicharamaker/ui/user/user_page.dart';
 import 'package:aicharamaker/ui/auth/view/auth_page.dart';
+import 'package:aicharamaker/ui/user/user_page.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -56,7 +57,7 @@ class _MainScreenState extends State<MainScreen> {
           ? ChatPage(profile: _selectedProfile!)
           : Center(child: Text("お気に入りのキャラがありません")),
       FavoriteScreen(),
-      AuthPage(),
+      UserScreen(),
     ];
 
     return Scaffold(
@@ -83,16 +84,6 @@ class _MainScreenState extends State<MainScreen> {
         onTap: _onItemTapped,
       ),
     );
-  }
-}
-
-// 各画面のWidget（仮のUIを表示）
-// これを各ページのファイルに分離して作成
-
-class UserScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text('ユーザー画面', style: TextStyle(fontSize: 24)));
   }
 }
 
