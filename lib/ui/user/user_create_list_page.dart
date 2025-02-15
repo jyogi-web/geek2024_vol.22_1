@@ -1,9 +1,8 @@
-// user_create_list_page.dart
-
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:aicharamaker/ui/favorite/favorite_page.dart'; // お気に入り画面のインポート
+import 'package:aicharamaker/ui/favorite/favorite_page.dart'; // お気に入り画面
+import 'package:aicharamaker/ui/create/view/create_page.dart'; // キャラ作成・編集画面
 
 class UserCreateListScreen extends StatelessWidget {
   @override
@@ -63,9 +62,28 @@ class UserCreateListScreen extends StatelessWidget {
                     child: ListTile(
                       title: Text(profile['name'] ?? '名前なし'),
                       subtitle: Text(profile['description'] ?? '説明なし'),
-                      trailing: IconButton(
-                        icon: Icon(Icons.delete, color: Colors.red),
-                        onPressed: () => _deleteProfile(context, documentId),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.edit, color: Colors.blue), // 編集ボタン
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => CreateScreen(
+                                    profileId: documentId, // 編集対象のプロフィールID
+                                    initialProfileData: profile, // プロフィールデータを渡す
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.delete, color: Colors.red), // 削除ボタン
+                            onPressed: () => _deleteProfile(context, documentId),
+                          ),
+                        ],
                       ),
                     ),
                   );
