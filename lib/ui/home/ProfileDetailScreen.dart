@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ProfileDetailScreen extends StatefulWidget {
   final String documentId;
@@ -11,14 +12,17 @@ class ProfileDetailScreen extends StatefulWidget {
 }
 
 class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100], // 背景色を淡いグレーに
       appBar: AppBar(
+
         title: Text("ぷろふぃーる詳細", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         backgroundColor: Colors.white,
         elevation: 1,
+
       ),
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance.collection('profiles').doc(widget.documentId).snapshots(),
@@ -104,6 +108,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                 ],
               ),
             ),
+
           );
         },
       ),
@@ -168,6 +173,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
               value != null ? value.toString() : '不明',
               style: TextStyle(fontSize: 16),
               overflow: TextOverflow.ellipsis,
+
             ),
           ),
         ],

@@ -100,8 +100,14 @@ class AuthViewModel extends ChangeNotifier {
       final userRef =
           FirebaseFirestore.instance.collection('users').doc(user.uid);
       await userRef.set(usermodel.toJson()); //ユーザー情報を保存
-      await userRef.collection('createdProfiles').doc('null'); // ユーザー情報の初期化
-      await userRef.collection('likedProfiles').doc('null'); // ユーザー情報の初期化
+      await userRef
+          .collection('createdProfiles')
+          .doc('null')
+          .set({}); // ユーザー情報の初期化
+      await userRef
+          .collection('likedProfiles')
+          .doc('null')
+          .set({}); // ユーザー情報の初期化
       debugPrint("ユーザー情報をFirestoreに保存しました: ${usermodel.toJson()}");
     }
     notifyListeners();

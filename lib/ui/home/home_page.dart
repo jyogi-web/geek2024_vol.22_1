@@ -9,7 +9,8 @@ import 'package:aicharamaker/ui/favorite/favorite_page.dart';
 
 class MainScreen extends StatefulWidget {
   @override
-  _MainScreenState createState() => _MainScreenState();}
+  _MainScreenState createState() => _MainScreenState();
+}
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
@@ -32,7 +33,8 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("ぷろふぃーるはぶ", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+        title: Text("ぷろふぃーるはぶ",
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
         backgroundColor: Colors.white,
         elevation: 0,
         titleTextStyle: TextStyle(color: Colors.black),
@@ -58,9 +60,6 @@ class _MainScreenState extends State<MainScreen> {
 
 // 各画面のWidget（仮のUIを表示）
 // これを各ページのファイルに分離して作成
-
-
-
 
 class UserScreen extends StatelessWidget {
   @override
