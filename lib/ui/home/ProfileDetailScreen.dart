@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:aicharamaker/ui/chat/view/chat_page.dart';
 
 class ProfileDetailScreen extends StatefulWidget {
   final String documentId;
@@ -35,7 +35,6 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
           }
 
           var profile = snapshot.data!.data() as Map<String, dynamic>;
-          bool isFavorite = profile['isFavorite'] ?? false;
 
           return SingleChildScrollView(
             child: Padding(
@@ -104,29 +103,21 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                     ),
                     child: Text("一覧画面へ戻る", style: TextStyle(fontSize: 16, color: Colors.white)),
                   ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChatPage(profile: profile),
+                        ),
+                      );
+                    },
+                    child: Text("このキャラでチャットする"),
+                  ),
                   SizedBox(height: 16),
                 ],
               ),
             ),
-
-          );
-        },
-      ),
-      floatingActionButton: StreamBuilder<DocumentSnapshot>(
-        stream: FirebaseFirestore.instance.collection('profiles').doc(widget.documentId).snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData || !snapshot.data!.exists) return Container();
-          var profile = snapshot.data!.data() as Map<String, dynamic>;
-          bool isFavorite = profile['isFavorite'] ?? false;
-
-          return FloatingActionButton(
-            backgroundColor: isFavorite ? Colors.red : Colors.grey,
-            child: Icon(isFavorite ? Icons.favorite : Icons.favorite_border, color: Colors.white),
-            onPressed: () {
-              FirebaseFirestore.instance.collection('profiles').doc(widget.documentId).update({
-                'isFavorite': !isFavorite,
-              });
-            },
           );
         },
       ),
