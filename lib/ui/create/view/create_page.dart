@@ -3,9 +3,12 @@ import 'package:provider/provider.dart';
 import 'package:aicharamaker/ui/create/view_model/create_view_model.dart';
 import 'package:aicharamaker/ui/auth/view/auth_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class CreateScreen extends StatelessWidget {
-  const CreateScreen({Key? key}) : super(key: key);
+  CreateScreen({Key? key}) : super(key: key);
+  String? _fileName;
 
   // ユーザーがログインしているかどうかを判定するメソッド
   bool _isUserLoggedIn(BuildContext context) {
@@ -16,6 +19,30 @@ class CreateScreen extends StatelessWidget {
     } else {
       return false;
     }
+  }
+
+  Future<void> _pickImage(CreateScreenViewModel viewModel) async {
+    // 画像をfirebase storageにアップロードする処理
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+      allowMultiple: false,
+    );
+    if (result == null) {
+      return;
+    }
+    final file = result.files.single;
+
+    _fileName = file.name;
+    final storageRef =
+        FirebaseStorage.instance.ref().child('uploads/${file.name}');
+    final uploadTask = storageRef.putData(file.bytes!);
+
+    await uploadTask.whenComplete(() async {
+      final downloadUrl = await storageRef.getDownloadURL();
+      viewModel.imageUrlController.text = downloadUrl;
+      print('Download URL: $downloadUrl');
+    });
+    // print('file: $file');
   }
 
   @override
@@ -85,7 +112,11 @@ class CreateScreen extends StatelessWidget {
                       border: OutlineInputBorder(),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () => _pickImage(viewModel),
+                    child: Text('ファイルを選択'),
+                  ),
+                  SizedBox(height: 20),
                   TextField(
                     controller: viewModel.genderController,
                     decoration: const InputDecoration(
