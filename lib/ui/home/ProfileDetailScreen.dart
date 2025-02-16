@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:aicharamaker/ui/chat/view/chat_page.dart';
 
 class ProfileDetailScreen extends StatefulWidget {
   final String documentId;
@@ -12,20 +12,21 @@ class ProfileDetailScreen extends StatefulWidget {
 }
 
 class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100], // 背景色を淡いグレーに
       appBar: AppBar(
-
-        title: Text("ぷろふぃーる詳細", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        title: Text("ぷろふぃーる詳細",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         backgroundColor: Colors.white,
         elevation: 1,
-
       ),
       body: StreamBuilder<DocumentSnapshot>(
-        stream: FirebaseFirestore.instance.collection('profiles').doc(widget.documentId).snapshots(),
+        stream: FirebaseFirestore.instance
+            .collection('profiles')
+            .doc(widget.documentId)
+            .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -35,7 +36,6 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
           }
 
           var profile = snapshot.data!.data() as Map<String, dynamic>;
-          bool isFavorite = profile['isFavorite'] ?? false;
 
           return SingleChildScrollView(
             child: Padding(
@@ -46,8 +46,12 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                   // プロフィール画像
                   CircleAvatar(
                     radius: 60,
-                    backgroundImage: profile['imageUrl'] != null ? NetworkImage(profile['imageUrl']) : null,
-                    child: profile['imageUrl'] == null ? Icon(Icons.person, size: 60, color: Colors.grey) : null,
+                    backgroundImage: profile['imageUrl'] != null
+                        ? NetworkImage(profile['imageUrl'])
+                        : null,
+                    child: profile['imageUrl'] == null
+                        ? Icon(Icons.person, size: 60, color: Colors.grey)
+                        : null,
                   ),
                   SizedBox(height: 16),
 
@@ -99,34 +103,29 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                     ),
-                    child: Text("一覧画面へ戻る", style: TextStyle(fontSize: 16, color: Colors.white)),
+                    child: Text("一覧画面へ戻る",
+                        style: TextStyle(fontSize: 16, color: Colors.white)),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChatPage(profile: profile),
+                        ),
+                      );
+                    },
+                    child: Text("このキャラでチャットする"),
                   ),
                   SizedBox(height: 16),
                 ],
               ),
             ),
-
-          );
-        },
-      ),
-      floatingActionButton: StreamBuilder<DocumentSnapshot>(
-        stream: FirebaseFirestore.instance.collection('profiles').doc(widget.documentId).snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData || !snapshot.data!.exists) return Container();
-          var profile = snapshot.data!.data() as Map<String, dynamic>;
-          bool isFavorite = profile['isFavorite'] ?? false;
-
-          return FloatingActionButton(
-            backgroundColor: isFavorite ? Colors.red : Colors.grey,
-            child: Icon(isFavorite ? Icons.favorite : Icons.favorite_border, color: Colors.white),
-            onPressed: () {
-              FirebaseFirestore.instance.collection('profiles').doc(widget.documentId).update({
-                'isFavorite': !isFavorite,
-              });
-            },
           );
         },
       ),
@@ -153,7 +152,11 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue)),
+          Text(title,
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue)),
           SizedBox(height: 8),
           ...children,
         ],
@@ -167,13 +170,13 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
       padding: EdgeInsets.only(bottom: 8),
       child: Row(
         children: [
-          Text("$label: ", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          Text("$label: ",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           Expanded(
             child: Text(
               value != null ? value.toString() : '不明',
               style: TextStyle(fontSize: 16),
               overflow: TextOverflow.ellipsis,
-
             ),
           ),
         ],
@@ -189,7 +192,8 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
         color: Colors.blue.shade100,
         borderRadius: BorderRadius.circular(20),
       ),
-      child: Text(tag, style: TextStyle(fontSize: 14, color: Colors.blue.shade900)),
+      child: Text(tag,
+          style: TextStyle(fontSize: 14, color: Colors.blue.shade900)),
     );
   }
 }
