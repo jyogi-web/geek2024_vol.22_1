@@ -133,4 +133,43 @@ class AuthViewModel extends ChangeNotifier {
       uid: user.uid,
     );
   }
+
+  /// ユーザーのプロフィール情報（name, photoURL）を更新する処理
+  Future<void> updateUserProfile({
+    String? name,
+    String? photoURL,
+  }) async {
+    final user = _firebaseAuth.currentUser;
+    if (user != null) {
+      // FirebaseAuth のユーザー情報を更新 (name, photoURL)
+      if (name != null || photoURL != null) {
+        await user.updateProfile(
+          displayName: name ?? user.displayName,
+          photoURL: photoURL ?? user.photoURL,
+        );
+        // 最新の情報を取得するためにユーザーを再読み込み
+        await user.reload();
+      }
+
+      // Firestore のユーザードキュメントを更新
+      final userRef =
+          FirebaseFirestore.instance.collection('users').doc(user.uid);
+      final Map<String, dynamic> updatedData = {};
+      if (name != null) updatedData['name'] = name;
+      if (photoURL != null) updatedData['photoURL'] = photoURL;
+      if (updatedData.isNotEmpty) {
+        await userRef.update(updatedData);
+      }
+
+      // ローカルの currentUser 情報も更新
+      if (currentUser != null) {
+        currentUser!.name = name ?? currentUser!.name;
+        currentUser!.photoURL = photoURL ?? currentUser!.photoURL;
+      }
+      debugPrint("ユーザープロフィールを更新しました: $updatedData");
+      notifyListeners();
+    } else {
+      debugPrint("プロフィール更新に失敗: ユーザーが存在しません。");
+    }
+  }
 }

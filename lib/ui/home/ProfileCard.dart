@@ -45,21 +45,31 @@ class _ProfileCardState extends State<ProfileCard> {
   void _toggleFavorite(BuildContext context) async {
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser == null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("ログインしてください")));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("ログインしてください")));
       return;
     }
 
     if (isFavorite) {
       // お気に入り解除
-      await FirebaseFirestore.instance.collection('users').doc(currentUser.uid)
-          .collection('likedProfiles').doc(widget.documentId).delete();
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("お気に入りを解除しました")));
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser.uid)
+          .collection('likedProfiles')
+          .doc(widget.documentId)
+          .delete();
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("お気に入りを解除しました")));
     } else {
       // お気に入り追加
-      await FirebaseFirestore.instance.collection('users').doc(currentUser.uid)
-          .collection('likedProfiles').doc(widget.documentId)
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser.uid)
+          .collection('likedProfiles')
+          .doc(widget.documentId)
           .set({'isFavorite': true});
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("お気に入りに追加しました")));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("お気に入りに追加しました")));
     }
 
     setState(() {
@@ -74,7 +84,8 @@ class _ProfileCardState extends State<ProfileCard> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ProfileDetailScreen(documentId: widget.documentId),
+            builder: (context) =>
+                ProfileDetailScreen(documentId: widget.documentId),
           ),
         );
       },
@@ -85,13 +96,16 @@ class _ProfileCardState extends State<ProfileCard> {
             backgroundImage: widget.profile['imageUrl'] != null
                 ? NetworkImage(widget.profile['imageUrl'])
                 : null,
-            child: widget.profile['imageUrl'] == null ? Icon(Icons.person) : null,
+            child:
+                widget.profile['imageUrl'] == null ? Icon(Icons.person) : null,
           ),
           title: Text(widget.profile['name'] ?? '名前なし'),
           subtitle: Row(
             children: [
-              if (widget.profile['tag1'] != null) _buildTag(widget.profile['tag1']),
-              if (widget.profile['tag2'] != null) _buildTag(widget.profile['tag2']),
+              if (widget.profile['tag'] != null)
+                ...widget.profile['tag']
+                    .map<Widget>((tag) => _buildTag(tag))
+                    .toList(),
             ],
           ),
           trailing: IconButton(
@@ -106,7 +120,7 @@ class _ProfileCardState extends State<ProfileCard> {
     );
   }
 
-  Widget _buildTag(String tag) {
+  Widget _buildTag(tag) {
     return Container(
       margin: EdgeInsets.only(right: 4),
       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),

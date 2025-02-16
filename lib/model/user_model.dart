@@ -1,10 +1,10 @@
 class UserModel {
-  final String name;
+  String name;
   final String? email;
   final bool? isEmailVerified;
   final bool? isAnonymous;
   final String? phoneNumber;
-  final String? photoURL;
+  String? photoURL;
   final String? refreshToken;
   final String? tenantId;
   final String? uid;
