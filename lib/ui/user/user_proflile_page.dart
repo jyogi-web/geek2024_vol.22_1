@@ -9,6 +9,7 @@ import 'package:aicharamaker/ui/favorite/favorite_page.dart';
 import 'package:aicharamaker/ui/home/ProfileListScreen.dart';
 import 'package:aicharamaker/ui/user/user_create_list_page.dart';
 import 'package:aicharamaker/ui/user/user_detail_page.dart';
+import 'package:aicharamaker/ui/image_create/profile_to_image_page.dart';
 
 class UserProfileScreen extends StatelessWidget {
   const UserProfileScreen({Key? key}) : super(key: key);
@@ -132,6 +133,16 @@ class UserProfileScreen extends StatelessWidget {
                         authViewModel.signOut();
                       },
                       child: const Text('ログアウト'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => CreateProfileListScreen()),
+                        );
+                      },
+                      child: Text("画像生成"),
                     ),
                   ],
                 ),
