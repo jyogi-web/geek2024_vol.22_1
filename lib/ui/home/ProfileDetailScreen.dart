@@ -16,12 +16,15 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100], // 背景色を淡いグレーに
+      backgroundColor: Colors.purple.shade50,
       appBar: AppBar(
-        title: Text("ぷろふぃーる詳細",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        title: Text(
+          "ぷろふぃーる詳細",
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
+        ),
         backgroundColor: Colors.white,
-        elevation: 1,
+        elevation: 2,
+        iconTheme: IconThemeData(color: Colors.black),
       ),
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
@@ -59,7 +62,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                   // 名前
                   Text(
                     profile['name'] ?? '名前なし',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
                   ),
                   SizedBox(height: 8),
 
@@ -75,6 +78,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
 
                   // プロフィール情報
                   _buildProfileSection("基本情報", [
+                    _buildProfileRow("タグ", profile['tag']),
                     _buildProfileRow("説明", profile['description']),
                     _buildProfileRow("性別", profile['gender']),
                     _buildProfileRow("誕生日", profile['birthDate']),
@@ -158,7 +162,9 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
     );
   }
 
+
   // プロフィール情報の表示用
+// プロフィール情報の表示用
   Widget _buildProfileSection(String title, List<Widget> children) {
     return Container(
       margin: EdgeInsets.only(bottom: 16),
@@ -190,6 +196,8 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
     );
   }
 
+
+      
   // プロフィールの項目を整える
   Widget _buildProfileRow(String label, dynamic value) {
     return Padding(

@@ -1,79 +1,117 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'ProfileCard.dart';
-import 'package:aicharamaker/ui/favorite/favorite_page.dart'; // お気に入り画面のインポート
-import 'package:aicharamaker/ui/home/ProfileListScreen.dart'; // 一覧画面用
-import 'package:aicharamaker/ui/home/ProfileCard.dart'; // カード用
+import 'package:aicharamaker/ui/home/ProfileListScreen.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
         elevation: 0,
-        titleTextStyle: TextStyle(color: Colors.black),
+        title: Text(
+          "新着プロフィール",
+          style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Colors.white),
+        ),
+        
         actions: [
-          IconButton(
-            icon: Icon(Icons.search, color: Colors.black),
-            onPressed: () {
-              // 検索機能の処理をここに追加
-              showSearch(context: context, delegate: CustomSearchDelegate());
-            },
+          Padding(
+            padding: EdgeInsets.only(top: 20, right: 20.0),
+            child: IconButton(
+              icon: Icon(Icons.search, color: Colors.black, size: 28),
+              onPressed: () {
+                showSearch(context: context, delegate: CustomSearchDelegate());
+              },
+            ),
           ),
         ],
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(height: 16),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Text("新着ぷろふぃーる",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+      extendBodyBehindAppBar: true,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.deepPurple.shade800, Colors.pinkAccent.shade400],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-          Expanded(
-            child: StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('profiles')
-                  .orderBy('createdAt', descending: true)
-                  .limit(5)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                }
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return Center(child: Text("新着プロフィールがありません"));
-                }
-
-                var profiles = snapshot.data!.docs;
-
-                return ListView.builder(
-                  itemCount: profiles.length,
-                  itemBuilder: (context, index) {
-                    var profile =
-                        profiles[index].data() as Map<String, dynamic>;
-                    return ProfileCard(
-                        profile: profile, documentId: profiles[index].id);
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: kToolbarHeight + 40),
+            // Padding(
+            //   padding: EdgeInsets.symmetric(horizontal: 16),
+            //   child: Text(
+            //     "新着ぷろふぃーる",
+            //     style: TextStyle(
+            //       fontSize: 22,
+            //       fontWeight: FontWeight.bold,
+            //       color: Colors.white,
+            //     ),
+            //   ),
+            // ),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(top: 15),
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('profiles')
+                      .orderBy('createdAt', descending: true)
+                      .limit(5)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return Center(child: Text("新着プロフィールがありません", style: TextStyle(color: Colors.white)));
+                    }
+                    var profiles = snapshot.data!.docs;
+                    return ListView.builder(
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: profiles.length,
+                      itemBuilder: (context, index) {
+                        var profile = profiles[index].data() as Map<String, dynamic>;
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          child: ProfileCard(profile: profile, documentId: profiles[index].id),
+                        );
+                      },
+                    );
                   },
-                );
-              },
+                ),
+              ),
             ),
-          ),
-          Center(
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ProfileListScreen()),
-                );
-              },
-              child: Text("一覧画面"),
+            Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.blueAccent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ProfileListScreen()),
+                  );
+                },
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.list, size: 20, color: Colors.white),
+                    SizedBox(width: 8),
+                    Text("一覧画面", style: TextStyle(fontSize: 16, color: Colors.white)),
+                  ],
+                ),
+              ),
             ),
-          ),
-          SizedBox(height: 16),
-        ],
+            SizedBox(height: 20),
+          ],
+        ),
       ),
     );
   }
@@ -166,5 +204,5 @@ class CustomSearchDelegate extends SearchDelegate {
         );
       },
     );
-  }
-}
+  } 
+} 
