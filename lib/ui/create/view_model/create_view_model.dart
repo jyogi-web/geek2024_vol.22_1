@@ -17,27 +17,21 @@ class CreateScreenViewModel extends ChangeNotifier {
   final TextEditingController bloodTypeController = TextEditingController();
   final TextEditingController ageController = TextEditingController();
   final TextEditingController hobbiesController = TextEditingController();
-  final TextEditingController familyStructureController =
-      TextEditingController();
+  final TextEditingController familyStructureController = TextEditingController();
   final TextEditingController birthDateController = TextEditingController();
   final TextEditingController otherDetailsController = TextEditingController();
   final TextEditingController likesDislikesController = TextEditingController();
   final TextEditingController concernsController = TextEditingController();
   final TextEditingController remarksController = TextEditingController();
 
-  /// 入力された内容から ProfileModel を生成し、Firestore に保存してポップアップを表示
+  /// プロフィールを Firestore に保存する（新規作成）
   Future<void> submitProfile(BuildContext context) async {
-    final profileId =
-        FirebaseFirestore.instance.collection('profiles').doc().id;
+    final profileId = FirebaseFirestore.instance.collection('profiles').doc().id;
     final user = FirebaseAuth.instance.currentUser;
 
     if (user == null) {
       debugPrint('User is not logged in');
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => AuthPage(),
-        ),
-      );
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => AuthPage()));
       return;
     }
 
@@ -54,10 +48,7 @@ class CreateScreenViewModel extends ChangeNotifier {
       height: heightController.text,
       bloodType: bloodTypeController.text,
       age: ageController.text,
-      hobbies: hobbiesController.text
-          .split(' ')
-          .map((hobby) => hobby.trim())
-          .toList(),
+      hobbies: hobbiesController.text.split(' ').map((hobby) => hobby.trim()).toList(),
       familyStructure: familyStructureController.text,
       birthDate: birthDateController.text,
       otherDetails: otherDetailsController.text,
@@ -69,44 +60,56 @@ class CreateScreenViewModel extends ChangeNotifier {
       updatedAt: DateTime.now(),
     );
 
-    // Firestore へのデータ保存
-    await FirebaseFirestore.instance
-        .collection('profiles')
-        .doc(profileId)
-        .set(profile.toJson());
+    try {
+      // Firestore に保存
+      await FirebaseFirestore.instance.collection('profiles').doc(profileId).set(profile.toJson());
+      await FirebaseFirestore.instance.collection('users').doc(user.uid).collection('createdProfiles').doc(profileId).set(profile.toJson());
 
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .collection('createdProfiles')
-        .doc(profileId)
-        .set(profile.toJson());
-
-    showDialog(
-      context: context, // 受け取ったcontextを使う
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('保存成功'),
-          content: const Text('プロフィールが保存されました。'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context); // ダイアログを閉じる
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => MainScreen(),
-                  ),
-                );
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('プロフィールが保存されました')));
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => MainScreen()));
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('保存に失敗しました: $e')));
+    }
   }
 
-  /// ViewModelを破棄するときにコントローラを解放
+  /// プロフィールを Firestore に更新する（編集）
+  Future<void> updateProfile(BuildContext context, String profileId) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      debugPrint('User is not logged in');
+      return;
+    }
+
+    final profileUpdate = {
+      'name': nameController.text,
+      'tag': tagController.text.split(' ').map((tag) => tag.trim()).toList(),
+      'description': descriptionController.text,
+      'imageUrl': imageUrlController.text,
+      'gender': genderController.text,
+      'personality': personalityController.text,
+      'height': heightController.text,
+      'bloodType': bloodTypeController.text,
+      'age': ageController.text,
+      'hobbies': hobbiesController.text.split(' ').map((hobby) => hobby.trim()).toList(),
+      'familyStructure': familyStructureController.text,
+      'birthDate': birthDateController.text,
+      'otherDetails': otherDetailsController.text,
+      'likesDislikes': likesDislikesController.text,
+      'concerns': concernsController.text,
+      'remarks': remarksController.text,
+      'updatedAt': DateTime.now(),
+    };
+
+    try {
+      await FirebaseFirestore.instance.collection('profiles').doc(profileId).update(profileUpdate);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('プロフィールが更新されました')));
+      Navigator.pop(context);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('更新に失敗しました: $e')));
+    }
+  }
+
+  /// ViewModel を破棄するときにコントローラを解放
   @override
   void dispose() {
     nameController.dispose();

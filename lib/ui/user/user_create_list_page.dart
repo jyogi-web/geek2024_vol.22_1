@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:aicharamaker/ui/home/ProfileCard.dart';
-import 'package:aicharamaker/ui/favorite/favorite_page.dart'; // お気に入り画面のインポート
+import 'package:aicharamaker/ui/favorite/favorite_page.dart'; // お気に入り画面
+import 'package:aicharamaker/ui/create/view/create_page.dart'; // キャラ作成・編集画面
 
 class UserCreateListScreen extends StatelessWidget {
   @override
@@ -24,7 +24,7 @@ class UserCreateListScreen extends StatelessWidget {
           ),
         ],
       ),
-       body: StreamBuilder<User?>(
+      body: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, userSnapshot) {
           if (userSnapshot.connectionState == ConnectionState.waiting) {
@@ -41,7 +41,7 @@ class UserCreateListScreen extends StatelessWidget {
                 .collection('profiles')
                 .where('userId', isEqualTo: user?.uid)
                 .snapshots(),
-                builder: (context, snapshot) {
+            builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(child: CircularProgressIndicator());
               }
@@ -55,7 +55,38 @@ class UserCreateListScreen extends StatelessWidget {
                 itemCount: profiles.length,
                 itemBuilder: (context, index) {
                   var profile = profiles[index].data() as Map<String, dynamic>;
-                  return ProfileCard(profile: profile, documentId: profiles[index].id);
+                  var documentId = profiles[index].id;
+
+                  return Card(
+                    margin: EdgeInsets.all(10),
+                    child: ListTile(
+                      title: Text(profile['name'] ?? '名前なし'),
+                      subtitle: Text(profile['description'] ?? '説明なし'),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.edit, color: Colors.blue), // 編集ボタン
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => CreateScreen(
+                                    profileId: documentId, // 編集対象のプロフィールID
+                                    initialProfileData: profile, // プロフィールデータを渡す
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.delete, color: Colors.red), // 削除ボタン
+                            onPressed: () => _deleteProfile(context, documentId),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
                 },
               );
             },
@@ -64,4 +95,14 @@ class UserCreateListScreen extends StatelessWidget {
       ),
     );
   }
- }
+
+  // プロフィール削除の処理
+  Future<void> _deleteProfile(BuildContext context, String documentId) async {
+    try {
+      await FirebaseFirestore.instance.collection('profiles').doc(documentId).delete();
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('プロフィールが削除されました')));
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('削除に失敗しました')));
+    }
+  }
+}
