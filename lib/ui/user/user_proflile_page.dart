@@ -141,6 +141,21 @@ class UserProfileScreen extends StatelessWidget {
                       const SizedBox(height: 12),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
+                          minimumSize: const Size.fromHeight(48),
+                          foregroundColor: Colors.black,
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CreateProfileListScreen()),
+                          );
+                        },
+                        child: Text("画像生成"),
+                      ),
+                      const SizedBox(height: 12),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.redAccent,
                           minimumSize: const Size.fromHeight(48),
                           foregroundColor: Colors.black,
@@ -151,16 +166,7 @@ class UserProfileScreen extends StatelessWidget {
                         },
                         child: const Text('ログアウト'),
                       ),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => CreateProfileListScreen()),
-                          );
-                        },
-                        child: Text("画像生成"),
-                      ),
+
                   ],
                 ),
               )
@@ -181,6 +187,7 @@ class UserProfileScreen extends StatelessWidget {
                       ),
                     ],
                ),
+            ),
         ),
       ),
     );
