@@ -83,147 +83,231 @@ class CreateScreen extends StatelessWidget {
             return SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   TextField(
                     controller: viewModel.nameController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: "名前",
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[100],
                     ),
                   ),
                   const SizedBox(height: 20),
                   TextField(
                     controller: viewModel.tagController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: "タグ (半角スペース区切り)",
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[100],
                     ),
                   ),
                   const SizedBox(height: 20),
                   TextField(
                     controller: viewModel.descriptionController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: "説明",
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[100],
                     ),
                   ),
                   const SizedBox(height: 20),
                   TextField(
                     controller: viewModel.imageUrlController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: "画像URL",
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[100],
                     ),
                   ),
+                  const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () => _pickImage(viewModel),
-                    child: Text('ファイルを選択'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 25),
+                    ),
+                    child: const Text('ファイルを選択'),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   TextField(
                     controller: viewModel.genderController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: "性別",
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[100],
                     ),
                   ),
                   const SizedBox(height: 20),
                   TextField(
                     controller: viewModel.personalityController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: "性格",
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[100],
                     ),
                   ),
                   const SizedBox(height: 20),
                   TextField(
                     controller: viewModel.heightController,
                     keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: "身長",
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[100],
                     ),
                   ),
                   const SizedBox(height: 20),
                   TextField(
                     controller: viewModel.bloodTypeController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: "血液型",
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[100],
                     ),
                   ),
                   const SizedBox(height: 20),
                   TextField(
                     controller: viewModel.ageController,
                     keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: "年齢",
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[100],
                     ),
                   ),
                   const SizedBox(height: 20),
                   TextField(
                     controller: viewModel.hobbiesController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: "趣味 (半角スペース区切り)",
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[100],
                     ),
                   ),
                   const SizedBox(height: 20),
                   TextField(
                     controller: viewModel.familyStructureController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: "家族構成",
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[100],
                     ),
                   ),
                   const SizedBox(height: 20),
                   TextField(
                     controller: viewModel.birthDateController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: "誕生日 (YYYY-MM-DD)",
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[100],
                     ),
                   ),
                   const SizedBox(height: 20),
                   TextField(
                     controller: viewModel.otherDetailsController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: "その他(話し方など)",
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[100],
                     ),
                   ),
                   const SizedBox(height: 20),
                   TextField(
                     controller: viewModel.likesDislikesController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: "好き/嫌い",
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[100],
                     ),
                   ),
                   const SizedBox(height: 20),
                   TextField(
                     controller: viewModel.concernsController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: "悩み",
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[100],
                     ),
                   ),
                   const SizedBox(height: 20),
                   TextField(
                     controller: viewModel.remarksController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: "備考",
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[100],
                     ),
                   ),
                   const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () {
-                      viewModel.submitProfile(context); // contextを渡す
-                    },
-                    child: const Text("決定！"),
-                  )
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        viewModel.submitProfile(context); // contextを渡す
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
+                      ),
+                      child: const Text("決定！"),
+                    ),
+                  ),
                 ],
               ),
             );
