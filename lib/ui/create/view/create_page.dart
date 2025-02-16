@@ -258,10 +258,15 @@ class CreateScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
+
                   Center(
                     child: ElevatedButton(
                       onPressed: () {
-                        viewModel.submitProfile(context); // contextを渡す
+                        if (profileId == null) {
+                          viewModel.submitProfile(context); // 新規作成
+                        } else {
+                          viewModel.updateProfile(context, profileId!); // 編集
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blue,
@@ -302,3 +307,4 @@ class CreateScreen extends StatelessWidget {
     });
   }
 }
+
