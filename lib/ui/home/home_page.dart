@@ -10,6 +10,7 @@ import 'package:aicharamaker/ui/home/HomeScreen.dart';
 import 'package:aicharamaker/ui/favorite/favorite_page.dart';
 import 'package:aicharamaker/ui/home/ProfileCard.dart'; // プロフィールカードのインポート
 import 'package:aicharamaker/ui/home/ProfileDetailScreen.dart'; // プロフィール詳細画面
+import 'package:aicharamaker/ui/user/user_page.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -24,7 +25,7 @@ class _MainScreenState extends State<MainScreen> {
     CreateScreen(),
     ChatPage(),
     FavoriteScreen(),
-    AuthPage(),
+    UserScreen(),
   ];
 
   void _onItemTapped(int index) {
