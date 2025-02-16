@@ -36,7 +36,9 @@ jobs:
         run: npm install -g firebase-tools
 
       # Firebase Hostingへデプロイ（CLIを利用）
-      - name: Deploy to Firebase Hosting (CLI)
+      - name: Deploy to Firebase Hosting
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
         run: firebase deploy --only hosting
 
       # または、FirebaseExtendedのGitHub Actionを利用してデプロイする場合は以下を有効にしてください
