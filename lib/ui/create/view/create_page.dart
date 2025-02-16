@@ -282,4 +282,23 @@ class CreateScreen extends StatelessWidget {
       ),
     );
   }
+  Future<void> _pickImage(CreateScreenViewModel viewModel) async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+      allowMultiple: false,
+    );
+    if (result == null) {
+      return;
+    }
+    final file = result.files.single;
+    
+    final storageRef = FirebaseStorage.instance.ref().child('uploads/${file.name}');
+    final metadata = SettableMetadata(contentType: 'image/png');
+    final uploadTask = storageRef.putData(file.bytes!, metadata);
+
+    await uploadTask.whenComplete(() async {
+      final downloadUrl = await storageRef.getDownloadURL();
+      viewModel.imageUrlController.text = downloadUrl;
+    });
+  }
 }
