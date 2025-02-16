@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:aicharamaker/ui/chat/view/chat_page.dart';
+import 'package:aicharamaker/ui/image_create/image_generator_page.dart';
 
 class ProfileDetailScreen extends StatefulWidget {
   final String documentId;
@@ -96,7 +97,43 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
 
                   SizedBox(height: 16),
 
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChatPage(profile: profile),
+                        ),
+                      );
+                    },
+                    child: Text("このキャラでチャットする"),
+                  ),
+                  SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      // タップ時に選択したプロフィール情報をもとに画像生成画面へ遷移
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ImageGeneratorPage(
+                            profile: profile,
+                            doc_id: widget.documentId,
+                          ),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                    ),
+                    child: Text("このプロフィールで画像をAI生成",
+                        style: TextStyle(fontSize: 16, color: Colors.white)),
+                  ),
                   // 一覧画面に戻るボタン
+                  SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
                       Navigator.pop(context);
@@ -111,18 +148,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                     child: Text("一覧画面へ戻る",
                         style: TextStyle(fontSize: 16, color: Colors.white)),
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ChatPage(profile: profile),
-                        ),
-                      );
-                    },
-                    child: Text("このキャラでチャットする"),
-                  ),
-                  SizedBox(height: 16),
+                  // 一覧画面に戻るボタン
                 ],
               ),
             ),
