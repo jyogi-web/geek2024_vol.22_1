@@ -8,76 +8,88 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
         elevation: 0,
-       
+        title: Text(
+          "新着プロフィール",
+          style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Colors.white),
+        ),
+        
         actions: [
-          IconButton(
-            icon: Icon(Icons.search, color: Colors.black),
-            onPressed: () {
-              showSearch(context: context, delegate: CustomSearchDelegate());
-            },
+          Padding(
+            padding: EdgeInsets.only(top: 20, right: 20.0),
+            child: IconButton(
+              icon: Icon(Icons.search, color: Colors.black, size: 28),
+              onPressed: () {
+                showSearch(context: context, delegate: CustomSearchDelegate());
+              },
+            ),
           ),
         ],
       ),
+      extendBodyBehindAppBar: true,
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.purple.shade50, Colors.white],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+            colors: [Colors.deepPurple.shade800, Colors.pinkAccent.shade400],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 16),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                "新着ぷろふぃーる",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-            ),
+            SizedBox(height: kToolbarHeight + 40),
+            // Padding(
+            //   padding: EdgeInsets.symmetric(horizontal: 16),
+            //   child: Text(
+            //     "新着ぷろふぃーる",
+            //     style: TextStyle(
+            //       fontSize: 22,
+            //       fontWeight: FontWeight.bold,
+            //       color: Colors.white,
+            //     ),
+            //   ),
+            // ),
             Expanded(
-              child: StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection('profiles')
-                    .orderBy('createdAt', descending: true)
-                    .limit(5)
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
-                  }
-                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                    return Center(child: Text("新着プロフィールがありません"));
-                  }
-                  var profiles = snapshot.data!.docs;
-                  return ListView.builder(
-                    itemCount: profiles.length,
-                    itemBuilder: (context, index) {
-                      var profile = profiles[index].data() as Map<String, dynamic>;
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        child: ProfileCard(profile: profile, documentId: profiles[index].id),
-                      );
-                    },
-                  );
-                },
+              child: Padding(
+                padding: EdgeInsets.only(top: 15),
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('profiles')
+                      .orderBy('createdAt', descending: true)
+                      .limit(5)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return Center(child: Text("新着プロフィールがありません", style: TextStyle(color: Colors.white)));
+                    }
+                    var profiles = snapshot.data!.docs;
+                    return ListView.builder(
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: profiles.length,
+                      itemBuilder: (context, index) {
+                        var profile = profiles[index].data() as Map<String, dynamic>;
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          child: ProfileCard(profile: profile, documentId: profiles[index].id),
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
             ),
             Center(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
-                  backgroundColor: Colors.lightBlue,
+                  backgroundColor: Colors.blueAccent,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(40),
+                    borderRadius: BorderRadius.circular(30),
                   ),
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 ),
@@ -90,14 +102,14 @@ class HomeScreen extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.list, size: 20),
+                    Icon(Icons.list, size: 20, color: Colors.white),
                     SizedBox(width: 8),
-                    Text("一覧画面", style: TextStyle(fontSize: 24)),
+                    Text("一覧画面", style: TextStyle(fontSize: 16, color: Colors.white)),
                   ],
                 ),
               ),
             ),
-            SizedBox(height: 24),
+            SizedBox(height: 20),
           ],
         ),
       ),

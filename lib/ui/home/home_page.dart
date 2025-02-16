@@ -39,7 +39,7 @@ class _MainScreenState extends State<MainScreen> {
       appBar: AppBar(
         title: Text("ぷろふぃーるはぶ",
             style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
           
